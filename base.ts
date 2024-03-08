@@ -1,5 +1,12 @@
-{
+export let base = {
  "Users":[
+    {"id": "a4e73037-ad8f-4706-a559-faed24017de1",
+    "login": "42",
+    "password": "42",
+    "version": 42,
+    "createdAt": 42,
+    "updatedAt": 0},
+
     {"id": "string",
     "login": "string",
     "password": "string",

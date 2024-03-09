@@ -46,8 +46,9 @@ export class UserService {
     createUser(CreateUserDto: CreateUserDto) {
 
         const users = mainBase.Users
-        if(CreateUserDto){
-
+        if((Object.keys(CreateUserDto)).length >= 3 || !CreateUserDto.login && !CreateUserDto.password ||
+            typeof CreateUserDto.login !== "string" || typeof CreateUserDto.password !== "string" ){
+            throw new HttpException('Incorrect dates, should be "login"(type string) and "password"(type string)', HttpStatus.BAD_REQUEST);
         }
         const user = ({
             ...CreateUserDto,

@@ -2,6 +2,7 @@
 import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4 } from 'uuid';
+
 import { base as mainBase } from "../../base";
 
 interface IUser {
@@ -19,11 +20,14 @@ export class UserService {
 
     getAllUsers() {
         const users = mainBase.Users
+
         return users
     }
 
     getUserById(id: string) {
+
         const users = mainBase.Users
+
         if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
@@ -40,6 +44,7 @@ export class UserService {
     }
 
     createUser(CreateUserDto: CreateUserDto) {
+
         const users = mainBase.Users
         if(CreateUserDto){
 
@@ -50,6 +55,7 @@ export class UserService {
             version: 1,
             createdAt: 0,
             updatedAt: 1
+
         })
         users.push(user)
         return user

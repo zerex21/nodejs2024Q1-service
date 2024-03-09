@@ -8,12 +8,12 @@ export let base = {
       "createdAt": 42,
       "updatedAt": 0},
 
-      {"id": "string",
-      "login": "string",
-      "password": "string",
-      "version": "number",
-      "createdAt": "number",
-      "updatedAt": 1}
+      {"id": "a4e73037-ad8f-4706-a559-faed24017de2",
+      "login": "41",
+      "password": "41",
+      "version": 41,
+      "createdAt": 41,
+      "updatedAt": 0},
   ],
    "Artists":[
       {"id": "string",

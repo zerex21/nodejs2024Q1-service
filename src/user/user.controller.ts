@@ -21,27 +21,27 @@ export class UserController {
 
     @Get(':id')
     @HttpCode(HttpStatus.OK)
-    getUserById(@Param('id') userId:string){
-        return this.userService.getUserById(userId)
+    async getUserById(@Param('id') userId:string){
+        return  this.userService.getUserById(userId)
     }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
-        createUser(@Body() CreateUserDto:CreateUserDto){
-           return this.userService.createUser(CreateUserDto)
-        }
+    createUser(@Body() CreateUserDto:CreateUserDto){
+        return this.userService.createUser(CreateUserDto)
+    }
 
     @Put(':id')
     @HttpCode(HttpStatus.OK)
-        updateUserById(@Body() UpdatePasswordDto: UpdatePasswordDto, @Param('id') userId:string){
-        return this.userService.updateUserById(userId)
+    updateUserById(@Body() UpdatePasswordDto: UpdatePasswordDto, @Param('id') userId:string){
+        return this.userService.updateUserById(UpdatePasswordDto,userId)
     }
+
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-        removeUser(@Param('id') userId:string){
-        return this.userService.deleteUser(userId)
+    removeUser(@Param('id') userId:string){
+        return (this.userService.deleteUser(userId))
     }
-
 
 }

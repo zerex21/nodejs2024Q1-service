@@ -1,5 +1,6 @@
-import { UserService } from './user.service';
 /* eslint-disable prettier/prettier */
+import { UserService } from './user.service';
+
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user.dto';

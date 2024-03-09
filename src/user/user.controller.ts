@@ -8,9 +8,7 @@ import { UpdatePasswordDto } from './dto/update-password-user.dto';
 @Controller('user')
 export class UserController {
 
-    constructor(private readonly userService: UserService){
-
-    }
+    constructor(private readonly userService: UserService){}
 
     @Get()
     @HttpCode(HttpStatus.OK)

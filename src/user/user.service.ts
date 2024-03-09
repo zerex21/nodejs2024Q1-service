@@ -66,7 +66,37 @@ export class UserService {
     }
 
     updateUserById(UpdatePasswordDto:UpdatePasswordDto,id: string) {
-        return this.products.find(p => p.id === id)
+
+        if (!checkUUID.test(id)) {
+            throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
+        }
+
+        if((Object.keys(UpdatePasswordDto)).length >= 3 || !UpdatePasswordDto.newPassword && !UpdatePasswordDto.oldPassword ||
+            typeof UpdatePasswordDto.newPassword !== "string" || typeof UpdatePasswordDto.oldPassword !== "string" ||
+            UpdatePasswordDto.oldPassword === UpdatePasswordDto.newPassword ){
+            throw new HttpException('Incorrect dates,passwords should be different and type string', HttpStatus.FORBIDDEN);
+        }
+
+        const res = users.find(p => {
+            if (p?.id === id) {
+                if(p.password !== UpdatePasswordDto.newPassword && p.password === UpdatePasswordDto.oldPassword){
+                    p.password = UpdatePasswordDto.newPassword
+                    return true
+                }else{
+                    throw new HttpException('Check correct your passwords', HttpStatus.FORBIDDEN);
+                }
+
+
+            }
+        })
+
+        if (res) {
+            return "Your password was successful changed!"
+        } else {
+            throw new HttpException("This user doesn't exist", HttpStatus.BAD_REQUEST)
+        }
+
+       /*  return this.products.find(p => p.id === id) */
     }
 
      deleteUser(id: string) {

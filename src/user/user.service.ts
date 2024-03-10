@@ -74,8 +74,8 @@ export class UserService {
         }
 
         const user = ({
-            ...CreateUserDto,
             id: uuidv4(),
+            ...CreateUserDto,
             version: 1,
             createdAt: this.getCurrentDate(),
             updatedAt: ''
@@ -83,7 +83,9 @@ export class UserService {
         })
 
         users.push(user)
-        return user
+        const userShow = {...user}
+        delete userShow.id
+        return userShow
     }
 
     updateUserById(UpdatePasswordDto:UpdatePasswordDto,id: string) {

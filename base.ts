@@ -16,9 +16,13 @@ export let base = {
       "updatedAt": "0"},
   ],
    "Artists":[
-      {"id": "string",
-      "name": "string",
-      "grammy": true}
+      {"id": "a4e73037-ad8f-4706-a559-faed24017de5",
+      "name": "fff",
+      "grammy": true},
+
+      {"id": "a4e73037-ad8f-4706-a559-faed24017de6",
+      "name": "QQQ",
+      "grammy": false},
   ],
    "Tracks":[
       {"id": "a4e73037-ad8f-4706-a559-faed24017de3",

@@ -36,14 +36,15 @@ export class ArtistService {
 
     createArtist(CreateArtistDto: CreateArtistDto) {
         /* const users = mainBase.Users */
-        if((Object.keys(CreateArtistDto)).length >= 3 || !CreateArtistDto.name && !CreateArtistDto.grammy || typeof CreateArtistDto.name !== "string" ||
+        if((Object.keys(CreateArtistDto)).length >= 3 || !CreateArtistDto.name ||
+            !CreateArtistDto.grammy || typeof CreateArtistDto.name !== "string" ||
             typeof CreateArtistDto.grammy !== "boolean"){
             throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
         }
 
         const artist = ({
-            ...CreateArtistDto,
             id: uuidv4(),
+            ...CreateArtistDto,
         })
 
         artists.push(artist)
@@ -51,18 +52,41 @@ export class ArtistService {
     }
 
     updateArtistById(UpdateDataArtistDto:UpdateDataArtistDto,id: string) {
+        const allowedKeys = ['name', 'grammy'];
+        const keys = Object.keys(UpdateDataArtistDto);
 
         if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
-        if((Object.keys(UpdateDataArtistDto)).length >= 3 || !UpdateDataArtistDto.name && !UpdateDataArtistDto.grammy ||
-            typeof UpdateDataArtistDto.name !== "string" || typeof UpdateDataArtistDto.grammy !== "boolean" ){
-            throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
+        for (const key of keys) {
+            if (!allowedKeys.includes(key) && (typeof UpdateDataArtistDto.name !== 'string' ||
+                typeof UpdateDataArtistDto.grammy !== 'boolean')) {
+                throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
+            }
         }
 
+       /*  if((Object.keys(UpdateDataArtistDto)).length >= 3 || !UpdateDataArtistDto.name && !UpdateDataArtistDto.grammy ||
+            typeof UpdateDataArtistDto.name !== "string" || typeof UpdateDataArtistDto.grammy !== "boolean" ){
+            throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
+        } */
+
+     /*    const res = artists.find(p => {
+            if (p?.id === id) {
+                return true
+            }else{
+                return false
+            }
+        }) */
         const res = artists.find(p => {
             if (p?.id === id) {
+                for (const key in p) {
+                    for (const key2 in UpdateDataArtistDto) {
+                        if (key === key2) {
+                            p[key] = UpdateDataArtistDto[key2]
+                        }
+                    }
+                }
                 return true
             }else{
                 return false

@@ -69,7 +69,7 @@ export class TrackService {
         const keys = Object.keys(UpdateDataTrackDto);
 
         if (!checkUUID.test(id)) {
-            throw new HttpException('Incorrect id', HttpStatus.NOT_FOUND);
+            throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
         for (const key of keys) {
@@ -77,7 +77,7 @@ export class TrackService {
             typeof UpdateDataTrackDto.artistId !== 'string' && UpdateDataTrackDto.artistId !== null ||
             typeof UpdateDataTrackDto.albumId !== 'string' && UpdateDataTrackDto.albumId !== null ||
             typeof UpdateDataTrackDto.duration !== 'number')) {
-                throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
+                throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
             }
         }
 
@@ -106,7 +106,7 @@ export class TrackService {
         if (res) {
             return "Your track was successful changed!"
         } else {
-            throw new HttpException("This track doesn't exist", HttpStatus.BAD_REQUEST)
+            throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND)
         }
 
        /*  return this.products.find(p => p.id === id) */
@@ -125,7 +125,7 @@ export class TrackService {
             tracks.splice(res, 1);
             return 'Track has been deleted';
         } else {
-            throw new HttpException("This track doesn't exist", HttpStatus.BAD_REQUEST);
+            throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND);
         }
     }
 

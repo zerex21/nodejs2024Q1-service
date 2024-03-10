@@ -60,7 +60,7 @@ export class ArtistService {
         }
 
         for (const key of keys) {
-            if (!allowedKeys.includes(key) && (typeof UpdateDataArtistDto.name !== 'string' ||
+            if (!allowedKeys.includes(key) || (typeof UpdateDataArtistDto.name !== 'string' ||
                 typeof UpdateDataArtistDto.grammy !== 'boolean')) {
                 throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
             }

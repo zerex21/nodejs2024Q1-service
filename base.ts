@@ -37,12 +37,18 @@ export let base = {
       "albumId": null,
       "duration": 0}
   ],
-   "Albums":[{
-      "id": "string",
+   "Albums":[
+      {"id": "a4e73037-ad8f-4706-a559-faed24017de7",
       "name": "string",
       "year": 42,
       "artistId": "string | null"
-   }],
+      },
+      {"id": "a4e73037-ad8f-4706-a559-faed24017de8",
+      "name": "string",
+      "year": 42,
+      "artistId": null
+      }
+   ],
    "Favorites":{
       "artists":[],
       "albums": [],

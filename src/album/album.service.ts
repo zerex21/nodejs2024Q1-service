@@ -36,16 +36,16 @@ export class AlbumService {
 
     createAlbum(CreateAlbumDto: CreateAlbumDto) {
         /* const users = mainBase.Users */
-        if((Object.keys(CreateAlbumDto)).length >= 3 || !CreateAlbumDto.name && !CreateAlbumDto.year &&
-            !CreateAlbumDto.artistId || typeof CreateAlbumDto.name !== "string" ||
-            typeof CreateAlbumDto.artistId !== "string" || typeof CreateAlbumDto.artistId !== null ||
-            typeof CreateAlbumDto.year !== "number"){
+        if((Object.keys(CreateAlbumDto)).length >= 4 || (!CreateAlbumDto.hasOwnProperty('name') ||
+        !CreateAlbumDto.hasOwnProperty('year') || !CreateAlbumDto.hasOwnProperty('artistId')) ||
+        (typeof CreateAlbumDto.name !== 'string' || typeof CreateAlbumDto.year !== 'number' ||
+        typeof CreateAlbumDto.artistId !== 'string' && CreateAlbumDto.artistId !== null )){
             throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
         }
 
         const album = ({
-            ...CreateAlbumDto,
             id: uuidv4(),
+            ...CreateAlbumDto,
         })
 
         albums.push(album)
@@ -53,26 +53,49 @@ export class AlbumService {
     }
 
     updateAlbumById(UpdateDataAlbumDto:UpdateDataAlbumDto,id: string) {
+        const allowedKeys = ['name', 'artistId', 'year'];
+        const keys = Object.keys(UpdateDataAlbumDto);
 
         if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
-        if((Object.keys(UpdateDataAlbumDto)).length >= 3 || !UpdateDataAlbumDto.name && !UpdateDataAlbumDto.artistId ||
+        for (const key of keys) {
+            if (!allowedKeys.includes(key) || (typeof UpdateDataAlbumDto.name !== 'string' ||
+                typeof UpdateDataAlbumDto.year !== 'number' ||
+                typeof UpdateDataAlbumDto.artistId !== 'string' && UpdateDataAlbumDto.artistId !== null )) {
+                throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        /* if((Object.keys(UpdateDataAlbumDto)).length >= 3 || !UpdateDataAlbumDto.name && !UpdateDataAlbumDto.artistId ||
             !UpdateDataAlbumDto.year ||typeof UpdateDataAlbumDto.name !== "string" ||
             typeof UpdateDataAlbumDto.artistId !== "string" || typeof UpdateDataAlbumDto.artistId !== null ||
             typeof UpdateDataAlbumDto.year !== "number"){
-            throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
-        }
+            throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
+        } */
 
-        const res = albums.find(p => {
+        /* const res = albums.find(p => {
             if (p?.id === id) {
                 return true
             }else{
                 return false
             }
+        }) */
+        const res = albums.find(p => {
+            if (p?.id === id) {
+                for (const key in p) {
+                    for (const key2 in UpdateDataAlbumDto) {
+                        if (key === key2) {
+                            p[key] = UpdateDataAlbumDto[key2]
+                        }
+                    }
+                }
+                return true
+            }else{
+                return false
+            }
         })
-
         if (res) {
             return "Your album was successful changed!"
         } else {

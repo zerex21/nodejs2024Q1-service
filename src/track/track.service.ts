@@ -73,7 +73,7 @@ export class TrackService {
         }
 
         for (const key of keys) {
-            if (!allowedKeys.includes(key) && (typeof UpdateDataTrackDto.name !== 'string' ||
+            if (!allowedKeys.includes(key) || (typeof UpdateDataTrackDto.name !== 'string' ||
             typeof UpdateDataTrackDto.artistId !== 'string' && UpdateDataTrackDto.artistId !== null ||
             typeof UpdateDataTrackDto.albumId !== 'string' && UpdateDataTrackDto.albumId !== null ||
             typeof UpdateDataTrackDto.duration !== 'number')) {

@@ -76,7 +76,7 @@ export class UserService {
         const user = ({
             ...CreateUserDto,
             id: uuidv4(),
-            version: 0,
+            version: 1,
             createdAt: this.getCurrentDate(),
             updatedAt: ''
 

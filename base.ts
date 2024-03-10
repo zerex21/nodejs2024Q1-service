@@ -18,19 +18,19 @@ export let base = {
    "Artists":[
       {"id": "string",
       "name": "string",
-      "grammy": "boolean"}
+      "grammy": true}
   ],
    "Tracks":[
       {"id": "string",
       "name": "string",
       "artistId": "string | null",
       "albumId": "string | null",
-      "duration": "number"}
+      "duration": 0}
   ],
    "Albums":[{
       "id": "string",
       "name": "string",
-      "year": "number",
+      "year": 42,
       "artistId": "string | null"
    }],
    "Favorites":{

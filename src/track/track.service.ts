@@ -73,7 +73,7 @@ export class TrackService {
             typeof UpdateDataTrackDto.artistId !== "string" || typeof UpdateDataTrackDto.artistId !== null ||
             typeof UpdateDataTrackDto.albumId !== "string" || typeof UpdateDataTrackDto.albumId !== null ||
             typeof UpdateDataTrackDto.duration !== "number"){
-            throw new HttpException('Incorrect dates,passwords should be different and type string', HttpStatus.FORBIDDEN);
+            throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
         }
 
         const res = tracks.find(p => {
@@ -85,7 +85,7 @@ export class TrackService {
         })
 
         if (res) {
-            return "Your password was successful changed!"
+            return "Your track was successful changed!"
         } else {
             throw new HttpException("This track doesn't exist", HttpStatus.BAD_REQUEST)
         }

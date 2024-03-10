@@ -30,7 +30,7 @@ export class ArtistService {
         if (res) {
             return res
         } else {
-            throw new HttpException("This artist doesn't exist", HttpStatus.BAD_REQUEST)
+            throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND)
         }
     }
 
@@ -72,7 +72,7 @@ export class ArtistService {
         if (res) {
             return "The artist was successful changed!"
         } else {
-            throw new HttpException("This artist doesn't exist", HttpStatus.BAD_REQUEST)
+            throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND)
         }
 
        /*  return this.products.find(p => p.id === id) */
@@ -91,7 +91,7 @@ export class ArtistService {
             artists.splice(res, 1);
             return 'Artist has been deleted';
         } else {
-            throw new HttpException("This artist doesn't exist", HttpStatus.BAD_REQUEST);
+            throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND);
         }
     }
 }

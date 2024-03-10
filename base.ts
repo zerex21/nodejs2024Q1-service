@@ -21,10 +21,16 @@ export let base = {
       "grammy": true}
   ],
    "Tracks":[
-      {"id": "string",
-      "name": "string",
-      "artistId": "string | null",
-      "albumId": "string | null",
+      {"id": "a4e73037-ad8f-4706-a559-faed24017de3",
+      "name": "AAA",
+      "artistId": "CCC | null",
+      "albumId": "DDD | null",
+      "duration": 12},
+
+      {"id": "a4e73037-ad8f-4706-a559-faed24017de4",
+      "name": "!!!",
+      "artistId": null,
+      "albumId": null,
       "duration": 0}
   ],
    "Albums":[{

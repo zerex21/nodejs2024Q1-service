@@ -39,23 +39,25 @@ export class TrackService {
         if (res) {
             return res
         } else {
-            throw new HttpException("This track doesn't exist", HttpStatus.BAD_REQUEST)
+            throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND)
         }
     }
 
     createTrack(CreateTrackDto: CreateTrackDto) {
         /* const users = mainBase.Users */
-        if((Object.keys(CreateTrackDto)).length >= 5 || !CreateTrackDto.name && !CreateTrackDto.artistId &&
-            !CreateTrackDto.albumId && !CreateTrackDto.duration || typeof CreateTrackDto.name !== "string" ||
-            typeof CreateTrackDto.artistId !== "string" || typeof CreateTrackDto.artistId !== null ||
-            typeof CreateTrackDto.albumId !== "string" || typeof CreateTrackDto.albumId !== null ||
-            typeof CreateTrackDto.duration !== "number" ){
+        if((Object.keys(CreateTrackDto)).length >= 5 || (!CreateTrackDto.hasOwnProperty('name') ||
+            !CreateTrackDto.hasOwnProperty('artistId') || !CreateTrackDto.hasOwnProperty('albumId') ||
+            !CreateTrackDto.hasOwnProperty('duration')) || (typeof CreateTrackDto.name !== 'string' ||
+            typeof CreateTrackDto.artistId !== 'string' && CreateTrackDto.artistId !== null ||
+            typeof CreateTrackDto.albumId !== 'string' && CreateTrackDto.albumId !== null ||
+            typeof CreateTrackDto.duration !== 'number')){
             throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
         }
 
         const track = ({
-            ...CreateTrackDto,
             id: uuidv4(),
+            ...CreateTrackDto,
+
         })
 
         tracks.push(track)
@@ -63,21 +65,38 @@ export class TrackService {
     }
 
     updateTrackById(UpdateDataTrackDto:UpdateDataTrackDto,id: string) {
+        const allowedKeys = ['name', 'artistId', 'albumId', 'duration'];
+        const keys = Object.keys(UpdateDataTrackDto);
 
         if (!checkUUID.test(id)) {
-            throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Incorrect id', HttpStatus.NOT_FOUND);
         }
 
-        if((Object.keys(UpdateDataTrackDto)).length >= 5 || !UpdateDataTrackDto.name && !UpdateDataTrackDto.artistId ||
-            !UpdateDataTrackDto.albumId && !UpdateDataTrackDto.duration ||typeof UpdateDataTrackDto.name !== "string" ||
-            typeof UpdateDataTrackDto.artistId !== "string" || typeof UpdateDataTrackDto.artistId !== null ||
-            typeof UpdateDataTrackDto.albumId !== "string" || typeof UpdateDataTrackDto.albumId !== null ||
-            typeof UpdateDataTrackDto.duration !== "number"){
-            throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
+        for (const key of keys) {
+            if (!allowedKeys.includes(key) && (typeof UpdateDataTrackDto.name !== 'string' ||
+            typeof UpdateDataTrackDto.artistId !== 'string' && UpdateDataTrackDto.artistId !== null ||
+            typeof UpdateDataTrackDto.albumId !== 'string' && UpdateDataTrackDto.albumId !== null ||
+            typeof UpdateDataTrackDto.duration !== 'number')) {
+                throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
+            }
         }
+
+       /*  if((typeof UpdateDataTrackDto.name !== 'string' ||
+            typeof UpdateDataTrackDto.artistId !== 'string' && UpdateDataTrackDto.artistId !== null ||
+            typeof UpdateDataTrackDto.albumId !== 'string' && UpdateDataTrackDto.albumId !== null ||
+            typeof UpdateDataTrackDto.duration !== 'number')){
+            throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
+        } */
 
         const res = tracks.find(p => {
             if (p?.id === id) {
+                for (const key in p) {
+                    for (const key2 in UpdateDataTrackDto) {
+                        if (key === key2) {
+                            p[key] = UpdateDataTrackDto[key2]
+                        }
+                    }
+                }
                 return true
             }else{
                 return false

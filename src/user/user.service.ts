@@ -116,7 +116,7 @@ export class UserService {
         if (res) {
             return "Your password was successful changed!"
         } else {
-            throw new HttpException("This user doesn't exist", HttpStatus.BAD_REQUEST)
+            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
         }
 
        /*  return this.products.find(p => p.id === id) */
@@ -135,7 +135,7 @@ export class UserService {
             users.splice(res, 1);
             return 'User has been deleted';
         } else {
-            throw new HttpException("This user doesn't exist", HttpStatus.BAD_REQUEST);
+            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND);
         }
     }
 

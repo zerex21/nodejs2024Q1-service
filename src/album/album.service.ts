@@ -30,7 +30,7 @@ export class AlbumService {
         if (res) {
             return res
         } else {
-            throw new HttpException("This album doesn't exist", HttpStatus.BAD_REQUEST)
+            throw new HttpException("This album doesn't exist", HttpStatus.NOT_FOUND)
         }
     }
 
@@ -76,7 +76,7 @@ export class AlbumService {
         if (res) {
             return "Your album was successful changed!"
         } else {
-            throw new HttpException("This album doesn't exist", HttpStatus.BAD_REQUEST)
+            throw new HttpException("This album doesn't exist", HttpStatus.NOT_FOUND)
         }
 
        /*  return this.products.find(p => p.id === id) */
@@ -95,7 +95,7 @@ export class AlbumService {
             albums.splice(res, 1);
             return 'Album has been deleted';
         } else {
-            throw new HttpException("This album doesn't exist", HttpStatus.BAD_REQUEST);
+            throw new HttpException("This album doesn't exist", HttpStatus.NOT_FOUND);
         }
     }
 }

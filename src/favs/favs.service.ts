@@ -30,7 +30,7 @@ export class FavsService {
     }
 
     removeItemFromFavs(item,id,type,name){
-        return favs[type] = favs[type].filter(track => track.id !== id);
+        return favs[type] = favs[type].filter(track => track?.id !== id);/***************************************** */
 
     }
 

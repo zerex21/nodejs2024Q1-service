@@ -15,6 +15,7 @@ interface Track {
   }
 
 const tracks = mainBase.Tracks
+const favs = mainBase.Favorites.tracks
 const checkUUID = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
 
 @Injectable()
@@ -44,7 +45,6 @@ export class TrackService {
     }
 
     createTrack(CreateTrackDto: CreateTrackDto) {
-        /* const users = mainBase.Users */
         if((Object.keys(CreateTrackDto)).length >= 5 || (!CreateTrackDto.hasOwnProperty('name') ||
             !CreateTrackDto.hasOwnProperty('artistId') || !CreateTrackDto.hasOwnProperty('albumId') ||
             !CreateTrackDto.hasOwnProperty('duration')) || (typeof CreateTrackDto.name !== 'string' ||
@@ -81,13 +81,6 @@ export class TrackService {
             }
         }
 
-       /*  if((typeof UpdateDataTrackDto.name !== 'string' ||
-            typeof UpdateDataTrackDto.artistId !== 'string' && UpdateDataTrackDto.artistId !== null ||
-            typeof UpdateDataTrackDto.albumId !== 'string' && UpdateDataTrackDto.albumId !== null ||
-            typeof UpdateDataTrackDto.duration !== 'number')){
-            throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
-        } */
-
         const res = tracks.find(p => {
             if (p?.id === id) {
                 for (const key in p) {
@@ -109,8 +102,6 @@ export class TrackService {
         } else {
             throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND)
         }
-
-       /*  return this.products.find(p => p.id === id) */
     }
 
      deleteTrack(id: string) {
@@ -123,9 +114,15 @@ export class TrackService {
 
 
         if (res !== -1) {
+
+            for (let i = 0; i < favs.length; i++) {
+                if (favs[i]?.id === id) {
+                    favs[i].id = null
+                }
+            }
+
             tracks.splice(res, 1);
             return JSON.stringify({message:'Track has been deleted'})
-            return 'Track has been deleted';
         } else {
             throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND);
         }

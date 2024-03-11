@@ -108,8 +108,8 @@ export class AlbumService {
             });
 
             for (let i = 0; i < favs.length; i++) {
-                if (favs[i].id === id) {
-                    favs[i] = null
+                if (favs[i]?.id === id) {
+                    favs[i].id = null
                 }
             }
 

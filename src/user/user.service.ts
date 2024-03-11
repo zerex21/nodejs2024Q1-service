@@ -75,8 +75,8 @@ export class UserService {
             id: uuidv4(),
             ...CreateUserDto,
             version: 1,
-            createdAt: this.getCurrentDate(),
-            updatedAt: ''
+            createdAt: Date.now(),
+            updatedAt: 0
 
         })
 
@@ -103,7 +103,7 @@ export class UserService {
                 if(p.password !== UpdatePasswordDto.newPassword && p.password === UpdatePasswordDto.oldPassword){
                     p.password = UpdatePasswordDto.newPassword
                     p.version++
-                    p.updatedAt= this.getCurrentDate()
+                    p.updatedAt= Date.now()
                     return true
                 }else{
                     throw new HttpException('Check correct your passwords', HttpStatus.BAD_REQUEST);
@@ -129,9 +129,8 @@ export class UserService {
 
         if (res !== -1) {
             users[res] = null
-           /*  users.splice(res, 1); */
+            /* users.splice(res, 1); */
             return JSON.stringify({message:'User has been deleted'})
-            return 'User has been deleted';
         } else {
             throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND);
         }

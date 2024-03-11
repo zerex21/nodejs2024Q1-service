@@ -5,6 +5,9 @@ import { base as mainBase } from "../../base";
 import { UpdateDataArtistDto } from './dto/update-data-artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 
+const tracks = mainBase.Tracks;
+const albums = mainBase.Albums;
+const favs = mainBase.Favorites.artists
 
 const artists = mainBase.Artists
 const checkUUID = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
@@ -94,7 +97,8 @@ export class ArtistService {
         })
 
         if (res) {
-            return "The artist was successful changed!"
+            return JSON.stringify({message:"The artist was successful changed!"})
+            /* return res */ /* "The artist was successful changed!" */
         } else {
             throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND)
         }
@@ -112,8 +116,28 @@ export class ArtistService {
 
 
         if (res !== -1) {
+            tracks.forEach(track => {
+                if (track.artistId === id) {
+                    track.artistId = null;
+                }
+            });
+            albums.forEach(album => {
+                if (album.artistId === id) {
+                    album.artistId = null;
+                }
+            });
+            for (let i = 0; i < favs.length; i++) {
+                if (favs[i].id === id) {
+                    favs[i] = null
+                }
+            }
+
             artists.splice(res, 1);
-            return 'Artist has been deleted';
+
+            return { message: 'Artist has been deleted' };
+           /*  artists.splice(res, 1);
+            return JSON.stringify({message:'Artist has been deleted'})
+            return 'Artist has been deleted'; */
         } else {
             throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND);
         }

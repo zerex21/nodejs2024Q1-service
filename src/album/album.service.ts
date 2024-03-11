@@ -97,7 +97,7 @@ export class AlbumService {
             }
         })
         if (res) {
-            return "Your album was successful changed!"
+            return JSON.stringify({message:"Your album was successful changed!"}) /* "Your album was successful changed!" */
         } else {
             throw new HttpException("This album doesn't exist", HttpStatus.NOT_FOUND)
         }

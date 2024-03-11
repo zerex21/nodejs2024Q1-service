@@ -104,6 +104,7 @@ export class TrackService {
         })
 
         if (res) {
+            return JSON.stringify({message:"Your track was successful changed!"})
             return "Your track was successful changed!"
         } else {
             throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND)
@@ -123,6 +124,7 @@ export class TrackService {
 
         if (res !== -1) {
             tracks.splice(res, 1);
+            return JSON.stringify({message:'Track has been deleted'})
             return 'Track has been deleted';
         } else {
             throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND);

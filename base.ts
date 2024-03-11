@@ -27,8 +27,8 @@ export let base = {
    "Tracks":[
       {"id": "a4e73037-ad8f-4706-a559-faed24017de3",
       "name": "AAA",
-      "artistId": "CCC | null",
-      "albumId": "DDD | null",
+      "artistId": "a4e73037-ad8f-4706-a559-faed24017de6",
+      "albumId": "a4e73037-ad8f-4706-a559-faed24017de7",
       "duration": 12},
 
       {"id": "a4e73037-ad8f-4706-a559-faed24017de4",
@@ -41,7 +41,7 @@ export let base = {
       {"id": "a4e73037-ad8f-4706-a559-faed24017de7",
       "name": "string",
       "year": 42,
-      "artistId": "string | null"
+      "artistId": "a4e73037-ad8f-4706-a559-faed24017de6"
       },
       {"id": "a4e73037-ad8f-4706-a559-faed24017de8",
       "name": "string",
@@ -50,8 +50,23 @@ export let base = {
       }
    ],
    "Favorites":{
-      "artists":[],
-      "albums": [],
-      "tracks": []}
+      "artists":[
+         {"id": "a4e73037-ad8f-4706-a559-faed24017de6",
+         "name": "QQQ",
+         "grammy": false}
+   ],
+      "albums": [
+         {"id": "a4e73037-ad8f-4706-a559-faed24017de8",
+         "name": "string",
+         "year": 42,
+         "artistId": null
+      }],
+      "tracks": [
+         {"id": "a4e73037-ad8f-4706-a559-faed24017de4",
+         "name": "!!!",
+         "artistId": null,
+         "albumId": null,
+         "duration": 0}
+   ]}
   }
 

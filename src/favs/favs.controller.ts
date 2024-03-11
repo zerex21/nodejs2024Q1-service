@@ -20,7 +20,7 @@ export class FavsController {
             return this.favsService.addFavsById(type,userId )
         }
 
-        @Delete(':id')
+        @Delete(':type/:id')
         @HttpCode(HttpStatus.NO_CONTENT)
         @Header('Content-Type', 'application/json')
         removeFavsById(@Param('type') type:string,@Param('id') userId:string){

@@ -48,7 +48,6 @@ export class UserService {
     }
 
     getUserById(id: string) {
-
         if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
@@ -62,12 +61,11 @@ export class UserService {
         if (res) {
             return res
         } else {
-            throw new HttpException("This user doesn't exist", HttpStatus.BAD_REQUEST)
+            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
         }
     }
 
     createUser(CreateUserDto: CreateUserDto) {
-        /* const users = mainBase.Users */
         if((Object.keys(CreateUserDto)).length >= 3 || !CreateUserDto.login && !CreateUserDto.password ||
             typeof CreateUserDto.login !== "string" || typeof CreateUserDto.password !== "string" ){
             throw new HttpException('Incorrect dates, should be "login"(type string) and "password"(type string)', HttpStatus.BAD_REQUEST);
@@ -97,7 +95,7 @@ export class UserService {
         if((Object.keys(UpdatePasswordDto)).length >= 3 || !UpdatePasswordDto.newPassword && !UpdatePasswordDto.oldPassword ||
             typeof UpdatePasswordDto.newPassword !== "string" || typeof UpdatePasswordDto.oldPassword !== "string" ||
             UpdatePasswordDto.oldPassword === UpdatePasswordDto.newPassword ){
-            throw new HttpException('Incorrect dates,passwords should be different and type string', HttpStatus.FORBIDDEN);
+            throw new HttpException('Incorrect dates,passwords should be different and type string', HttpStatus.BAD_REQUEST);
         }
 
         const res = users.find(p => {
@@ -108,22 +106,20 @@ export class UserService {
                     p.updatedAt= this.getCurrentDate()
                     return true
                 }else{
-                    throw new HttpException('Check correct your passwords', HttpStatus.FORBIDDEN);
+                    throw new HttpException('Check correct your passwords', HttpStatus.BAD_REQUEST);
                 }
             }
         })
 
         if (res) {
+            return JSON.stringify({message:"Your password was successful changed!"})
             return "Your password was successful changed!"
         } else {
             throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
         }
-
-       /*  return this.products.find(p => p.id === id) */
     }
 
      deleteUser(id: string) {
-
         if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
@@ -132,7 +128,9 @@ export class UserService {
 
 
         if (res !== -1) {
-            users.splice(res, 1);
+            users[res] = null
+           /*  users.splice(res, 1); */
+            return JSON.stringify({message:'User has been deleted'})
             return 'User has been deleted';
         } else {
             throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND);

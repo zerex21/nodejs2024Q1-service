@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user.dto';
+import { UserEntity } from './entities/userEntity';
 
 @Controller('user')
 export class UserController {
@@ -13,8 +14,11 @@ export class UserController {
     @Get()
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    getAll(){
-        return this.userService.getAllUsers()
+    async getAll(){
+        const users = this.userService.getAllUsers()
+        return new UserEntity(users)
+       /*  const usersOhnePassword = (await users).map((user) => new UserEntity(user));
+        return usersOhnePassword; */
     }
 
 
@@ -22,21 +26,24 @@ export class UserController {
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
     async getUserById(@Param('id') userId:string){
-        return  this.userService.getUserById(userId)
+        const user = this.userService.getUserById(userId)
+        return new UserEntity(user)
     }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
     @Header('Content-Type', 'application/json')
     createUser(@Body() CreateUserDto:CreateUserDto){
-        return this.userService.createUser(CreateUserDto)
+        const user = this.userService.createUser(CreateUserDto)
+        return new UserEntity(user)
     }
 
     @Put(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
     updateUserById(@Body() UpdatePasswordDto: UpdatePasswordDto, @Param('id') userId:string){
-        return this.userService.updateUserById(UpdatePasswordDto,userId)
+        const user = this.userService.updateUserById(UpdatePasswordDto,userId)
+        return new UserEntity(user)
     }
 
 
@@ -44,7 +51,8 @@ export class UserController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @Header('Content-Type', 'application/json')
     removeUser(@Param('id') userId:string){
-        return (this.userService.deleteUser(userId))
+        const user = (this.userService.deleteUser(userId))
+        return new UserEntity(user)
     }
 
 }

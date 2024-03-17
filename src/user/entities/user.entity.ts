@@ -18,9 +18,9 @@ export class User{
     version: number
 
     @CreateDateColumn()
-    createdAt: Data
+    createdAt: Date
 
     @CreateDateColumn()
-    updatedAt: Data
+    updatedAt: Date
 
 }

@@ -1,6 +1,6 @@
 import { IsUUID } from "class-validator";
 import { Artist } from "src/artist/entities/artist.entity";
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity('album')

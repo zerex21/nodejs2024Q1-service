@@ -4,6 +4,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { base as mainBase } from "../../base";
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
 
 
 
@@ -22,33 +25,25 @@ const checkUUID = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-
 @Injectable()
 export class UserService {
 
-
-    getCurrentDate(){
-        const currentDate = new Date();
-        const day = currentDate.getDate();
-        const month = currentDate.getMonth() + 1; // Месяцы начинаются с 0, поэтому добавляем 1
-        const year = currentDate.getFullYear();
-        const hours = currentDate.getHours();
-        const minutes = currentDate.getMinutes();
-
-        // Форматирование чисел меньше 10 для добавления ведущего нуля
-        const formattedDay = day < 10 ? `0${day}` : `${day}`;
-        const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-        const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
-        const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
-
-        // Сборка строки с датой в нужном формате
-        const formattedDate = `${formattedDay}.${formattedMonth}.${year} ${formattedHours}:${formattedMinutes}`;
-
-        return `${formattedDate}`;
-      }
+    constructor(
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+      ) {}
 
     getAllUsers() {
-        return users
+        return this.userRepository.find()
     }
 
     getUserById(id: string) {
-        if (!checkUUID.test(id)) {
+        const res = this.userRepository.findOneBy({id})
+
+        if(res){
+            return res
+        }
+
+        throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
+
+       /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
@@ -62,16 +57,18 @@ export class UserService {
             return res
         } else {
             throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
-        }
+        } */
     }
 
-    createUser(CreateUserDto: CreateUserDto) {
-        if((Object.keys(CreateUserDto)).length >= 3 || !CreateUserDto.login && !CreateUserDto.password ||
+    createUser({login, password}:CreateUserDto/* CreateUserDto: CreateUserDto */) {
+       /*  if((Object.keys(CreateUserDto)).length >= 3 || !CreateUserDto.login && !CreateUserDto.password ||
             typeof CreateUserDto.login !== "string" || typeof CreateUserDto.password !== "string" ){
             throw new HttpException('Incorrect dates, should be "login"(type string) and "password"(type string)', HttpStatus.BAD_REQUEST);
         }
-
-        const user = ({
+ */
+        const newUser = this.userRepository.create( {login,password})
+        return this.userRepository.save(newUser)
+       /*  const user = ({
             id: uuidv4(),
             ...CreateUserDto,
             version: 1,
@@ -83,7 +80,7 @@ export class UserService {
         users.push(user)
         const userShow = {...user}
         delete userShow.id
-        return userShow
+        return userShow */
     }
 
     updateUserById(UpdatePasswordDto:UpdatePasswordDto,id: string) {
@@ -119,8 +116,14 @@ export class UserService {
         }
     }
 
-     deleteUser(id: string) {
-        if (!checkUUID.test(id)) {
+    async deleteUser(id: string) {
+        const deleteResult = await this.userRepository.delete(id)
+
+        if(deleteResult.affected === 0){
+            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND);
+        }
+        return
+       /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
@@ -129,11 +132,11 @@ export class UserService {
 
         if (res !== -1) {
             users[res] = null
-            /* users.splice(res, 1); */
+
             return JSON.stringify({message:'User has been deleted'})
         } else {
             throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND);
-        }
+        } */
     }
 
 

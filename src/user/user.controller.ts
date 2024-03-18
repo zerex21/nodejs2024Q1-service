@@ -15,8 +15,11 @@ export class UserController {
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
     async getAll(){
-        const users = this.userService.getAllUsers()
-        return new UserEntity(users)
+        const users = await this.userService.getAllUsers();
+    const usersOnePassword = users.map((user) => new UserEntity(user));
+    return usersOnePassword;
+        /* const users = await this.userService.getAllUsers()
+        return new UserEntity(users) */
        /*  const usersOhnePassword = (await users).map((user) => new UserEntity(user));
         return usersOhnePassword; */
     }
@@ -25,24 +28,24 @@ export class UserController {
     @Get(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    async getUserById(@Param('id') userId:string){
-        const user = this.userService.getUserById(userId)
+    async getUserById(@Param('id') userId:string): Promise<UserEntity>{
+        const user = await this.userService.getUserById(userId)
         return new UserEntity(user)
     }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
     @Header('Content-Type', 'application/json')
-    createUser(@Body() CreateUserDto:CreateUserDto){
-        const user = this.userService.createUser(CreateUserDto)
+   async createUser(@Body() CreateUserDto:CreateUserDto): Promise<UserEntity>{
+        const user = await this.userService.createUser(CreateUserDto)
         return new UserEntity(user)
     }
 
     @Put(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    updateUserById(@Body() UpdatePasswordDto: UpdatePasswordDto, @Param('id') userId:string){
-        const user = this.userService.updateUserById(UpdatePasswordDto,userId)
+    async updateUserById(@Body() UpdatePasswordDto: UpdatePasswordDto, @Param('id') userId:string): Promise<UserEntity> {
+        const user = await this.userService.updateUserById(UpdatePasswordDto,userId)
         return new UserEntity(user)
     }
 
@@ -50,9 +53,9 @@ export class UserController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @Header('Content-Type', 'application/json')
-    removeUser(@Param('id') userId:string){
-        const user = (this.userService.deleteUser(userId))
-        return new UserEntity(user)
+    async removeUser(@Param('id') userId:string){
+       /*  const user = */await this.userService.deleteUser(userId)
+        /* return new UserEntity(user) */
     }
 
 }

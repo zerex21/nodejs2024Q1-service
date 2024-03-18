@@ -67,25 +67,40 @@ export class UserService {
         }
  */
         const newUser = this.userRepository.create( {login,password})
-        return this.userRepository.save(newUser)
-       /*  const user = ({
+      /*   const newUser = ({
             id: uuidv4(),
-            ...CreateUserDto,
+            login,
+            password,
             version: 1,
             createdAt: Date.now(),
-            updatedAt: 0
+            updatedAt: Date.now()
 
-        })
+        }) */
 
-        users.push(user)
+        /* users.push(user)
         const userShow = {...user}
         delete userShow.id
         return userShow */
+
+        return this.userRepository.save(newUser)
+
     }
 
-    updateUserById(UpdatePasswordDto:UpdatePasswordDto,id: string) {
+    async updateUserById({ oldPassword, newPassword }:UpdatePasswordDto,id: string) {
+        const user = await this.userRepository.findOneBy({ id });
+        if (!user) {
+          throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
+        }
 
-        if (!checkUUID.test(id)) {
+        const isEquals = /* this.hashPassword(oldPassword) ===  */user.password;
+        if (!isEquals) {
+          throw new HttpException(`oldPassword is wrong`, 403);
+        }
+
+      /*   const hashNewPassword = this.hashPassword(newPassword); */
+        await this.userRepository.update(id, { password: newPassword });
+        return await this.userRepository.findOneBy({ id });
+       /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
@@ -113,7 +128,7 @@ export class UserService {
             return "Your password was successful changed!"
         } else {
             throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
-        }
+        } */
     }
 
     async deleteUser(id: string) {

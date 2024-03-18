@@ -1,10 +1,10 @@
 import { IsUUID } from "class-validator";
-import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
 
 
 @Entity('user')
 export class User{
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     @IsUUID(4)
     id: string
 
@@ -14,13 +14,41 @@ export class User{
     @Column()
     password: string
 
-    @Column()
+    @VersionColumn()
     version: number
 
-    @CreateDateColumn()
-    createdAt: Date
+   /*  @CreateDateColumn({
+        name: 'created_at',
+        type: 'timestamp',
+        transformer: {
+          from(value: Date): number {
+            return value.getTime();
+          },
+          to(value: Date) {
+            return value;
+          },
+        },
+      })
+      createdAt: number;
+
+      @UpdateDateColumn({
+        name: 'updated_at',
+        type: 'timestamp',
+        transformer: {
+          from(value: Date): number {
+            return value.getTime();
+          },
+          to(value: Date) {
+            return value;
+          },
+        },
+      })
+      updatedAt: number; */
 
     @CreateDateColumn()
-    updatedAt: Date
+    createdAt: number
+
+    @CreateDateColumn()
+    updatedAt: number
 
 }

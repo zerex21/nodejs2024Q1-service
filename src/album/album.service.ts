@@ -1,25 +1,34 @@
 /* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { base as mainBase } from "../../base";
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateDataAlbumDto } from './dto/update-data-ulbum.dto';
-
-const albums = mainBase.Albums
-const tracks = mainBase.Tracks;
-const favs = mainBase.Favorites.albums
-const checkUUID = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Album } from './entities/album.entity';
 
 @Injectable()
 export class AlbumService {
-    getAllAlbums() {
-        return albums
+
+    constructor(
+        @InjectRepository(Album)
+        private readonly albumRepository: Repository<Album>,
+      ) {}
+
+
+    async getAllAlbums() {
+        return this.albumRepository.find()
     }
 
-    getAlbumById(id: string) {
+    async getAlbumById(id: string) {
 
-        if (!checkUUID.test(id)) {
+        const res = await this.albumRepository.findOneBy({id})
+
+        if(!res){
+            throw new HttpException("This album doesn't exist", HttpStatus.NOT_FOUND)
+
+        }
+        return res
+        /* if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
@@ -33,11 +42,19 @@ export class AlbumService {
             return res
         } else {
             throw new HttpException("This album doesn't exist", HttpStatus.NOT_FOUND)
-        }
+        } */
     }
 
-    createAlbum(CreateAlbumDto: CreateAlbumDto) {
-        if((Object.keys(CreateAlbumDto)).length >= 4 || (!CreateAlbumDto.hasOwnProperty('name') ||
+    async createAlbum(CreateAlbumDto: CreateAlbumDto) {
+
+        try {
+            const newTrack = await this.albumRepository.create(CreateAlbumDto);
+            return await this.albumRepository.save(newTrack);
+          } catch (error) {
+            throw new HttpException("This artist with id doesn't exist", HttpStatus.NOT_FOUND);
+          }
+
+        /* if((Object.keys(CreateAlbumDto)).length >= 4 || (!CreateAlbumDto.hasOwnProperty('name') ||
         !CreateAlbumDto.hasOwnProperty('year') || !CreateAlbumDto.hasOwnProperty('artistId')) ||
         (typeof CreateAlbumDto.name !== 'string' || typeof CreateAlbumDto.year !== 'number' ||
         typeof CreateAlbumDto.artistId !== 'string' && CreateAlbumDto.artistId !== null )){
@@ -50,11 +67,27 @@ export class AlbumService {
         })
 
         albums.push(album)
-        return album
+        return album */
     }
 
-    updateAlbumById(UpdateDataAlbumDto:UpdateDataAlbumDto,id: string) {
-        const allowedKeys = ['name', 'artistId', 'year'];
+    async updateAlbumById(UpdateDataAlbumDto:UpdateDataAlbumDto,id: string) {
+       const entity = await this.albumRepository.findOneBy({ id });
+    if (!entity) {
+        throw new HttpException("This artist with id doesn't exist", HttpStatus.NOT_FOUND);
+    }
+    for (const key in UpdateDataAlbumDto) {
+      if (Object.prototype.hasOwnProperty.call(UpdateDataAlbumDto, key)) {
+        const element = UpdateDataAlbumDto[key];
+        entity[key] = element;
+      }
+    }
+    try {
+      await this.albumRepository.update({ id }, UpdateDataAlbumDto);
+    } catch (error) {
+        throw new HttpException("This artist with id doesn't exist", HttpStatus.NOT_FOUND);
+    }
+    return entity;
+        /* const allowedKeys = ['name', 'artistId', 'year'];
         const keys = Object.keys(UpdateDataAlbumDto);
 
         if (!checkUUID.test(id)) {
@@ -84,15 +117,20 @@ export class AlbumService {
             }
         })
         if (res) {
-            return JSON.stringify({message:"Your album was successful changed!"}) /* "Your album was successful changed!" */
+            return JSON.stringify({message:"Your album was successful changed!"})
         } else {
             throw new HttpException("This album doesn't exist", HttpStatus.NOT_FOUND)
-        }
+        } */
     }
 
-     deleteAlbum(id: string) {
+    async deleteAlbum(id: string) {
+        const deleteResult = await this.albumRepository.delete(id)
 
-        if (!checkUUID.test(id)) {
+        if(deleteResult.affected === 0){
+            throw new HttpException("This album doesn't track", HttpStatus.NOT_FOUND);
+        }
+        return
+       /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
@@ -118,6 +156,6 @@ export class AlbumService {
 
         } else {
             throw new HttpException("This album doesn't exist", HttpStatus.NOT_FOUND);
-        }
+        } */
     }
 }

@@ -1,12 +1,9 @@
-import { IsUUID } from "class-validator";
 import { Artist } from "src/artist/entities/artist.entity";
-import { Column, Entity, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('album')
 export class Album{
-    @PrimaryGeneratedColumn()
-    @IsUUID(4)
+    @PrimaryGeneratedColumn("uuid")
     id: string
 
     @Column()
@@ -15,7 +12,11 @@ export class Album{
     @Column()
     year: number
 
-    @OneToOne(() => Artist, (artist) => artist.id)
-    artistId: string | null
+    @Column()
+    artistId: string | null;
+
+    @ManyToOne(() => Artist, { onDelete: 'SET NULL' })
+    @JoinColumn()
+    artist: Artist;
 
 }

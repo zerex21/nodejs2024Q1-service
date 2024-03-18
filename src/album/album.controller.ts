@@ -13,8 +13,8 @@ export class AlbumController {
     @Get()
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    getAll(){
-        return  this.albumService.getAllAlbums()
+    async getAll(){
+        return await this.albumService.getAllAlbums()
     }
 
 
@@ -22,28 +22,28 @@ export class AlbumController {
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
     async getAlbumById(@Param('id') userId:string){
-        return  this.albumService.getAlbumById(userId)
+        return await this.albumService.getAlbumById(userId)
     }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
     @Header('Content-Type', 'application/json')
-    createAlbum(@Body() CreateAlbumDto:CreateAlbumDto){
-        return this.albumService.createAlbum(CreateAlbumDto)
+    async createAlbum(@Body() CreateAlbumDto:CreateAlbumDto){
+        return await this.albumService.createAlbum(CreateAlbumDto)
     }
 
     @Put(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    updateAlbumById(@Body() UpdateDataAlbumDto: UpdateDataAlbumDto, @Param('id') userId:string){
-        return this.albumService.updateAlbumById(UpdateDataAlbumDto,userId)
+    async updateAlbumById(@Body() UpdateDataAlbumDto: UpdateDataAlbumDto, @Param('id') userId:string){
+        return await this.albumService.updateAlbumById(UpdateDataAlbumDto,userId)
     }
 
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @Header('Content-Type', 'application/json')
-    removeAlbum(@Param('id') userId:string){
-        return (this.albumService.deleteAlbum(userId))
+    async removeAlbum(@Param('id') userId:string){
+        return await (this.albumService.deleteAlbum(userId))
     }
 }

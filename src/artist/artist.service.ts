@@ -1,26 +1,34 @@
 /* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
-import { base as mainBase } from "../../base";
 import { UpdateDataArtistDto } from './dto/update-data-artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
-
-const tracks = mainBase.Tracks;
-const albums = mainBase.Albums;
-const favs = mainBase.Favorites.artists
-
-const artists = mainBase.Artists
-const checkUUID = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+import { InjectRepository } from '@nestjs/typeorm';
+import { Artist } from './entities/artist.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArtistService {
-    getAllArtists() {
-        return artists
+
+    constructor(
+        @InjectRepository(Artist)
+        private readonly artistRepository: Repository<Artist>,
+      ) {}
+
+    async getAllArtists() {
+        return this.artistRepository.find()
     }
 
-    getArtistById(id: string) {
+    async getArtistById(id: string) {
 
-        if (!checkUUID.test(id)) {
+        const res = await this.artistRepository.findOneBy({id})
+
+        if(!res){
+            throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND)
+
+        }
+        return res
+
+       /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
@@ -34,12 +42,14 @@ export class ArtistService {
             return res
         } else {
             throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND)
-        }
+        } */
     }
 
-    createArtist(CreateArtistDto: CreateArtistDto) {
-        /* const users = mainBase.Users */
-        if((Object.keys(CreateArtistDto)).length >= 3 || !CreateArtistDto.name ||
+    async createArtist(CreateArtistDto: CreateArtistDto) {
+
+        const newArtist = this.artistRepository.create(CreateArtistDto);
+        return await this.artistRepository.save(newArtist);
+        /* if((Object.keys(CreateArtistDto)).length >= 3 || !CreateArtistDto.name ||
             !CreateArtistDto.grammy || typeof CreateArtistDto.name !== "string" ||
             typeof CreateArtistDto.grammy !== "boolean"){
             throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
@@ -51,11 +61,24 @@ export class ArtistService {
         })
 
         artists.push(artist)
-        return artist
+        return artist */
     }
 
-    updateArtistById(UpdateDataArtistDto:UpdateDataArtistDto,id: string) {
-        const allowedKeys = ['name', 'grammy'];
+    async updateArtistById(UpdateDataArtistDto:UpdateDataArtistDto,id: string) {
+        const entity = await this.artistRepository.findOneBy({ id });
+    if (!entity) {
+      throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
+    }
+    for (const key in UpdateDataArtistDto) {
+      if (Object.prototype.hasOwnProperty.call(UpdateDataArtistDto, key)) {
+        const element = UpdateDataArtistDto[key];
+        entity[key] = element;
+      }
+    }
+    await this.artistRepository.update({ id }, UpdateDataArtistDto);
+    return entity;
+
+        /* const allowedKeys = ['name', 'grammy'];
         const keys = Object.keys(UpdateDataArtistDto);
 
         if (!checkUUID.test(id)) {
@@ -69,18 +92,6 @@ export class ArtistService {
             }
         }
 
-       /*  if((Object.keys(UpdateDataArtistDto)).length >= 3 || !UpdateDataArtistDto.name && !UpdateDataArtistDto.grammy ||
-            typeof UpdateDataArtistDto.name !== "string" || typeof UpdateDataArtistDto.grammy !== "boolean" ){
-            throw new HttpException('Incorrect dates types', HttpStatus.FORBIDDEN);
-        } */
-
-     /*    const res = artists.find(p => {
-            if (p?.id === id) {
-                return true
-            }else{
-                return false
-            }
-        }) */
         const res = artists.find(p => {
             if (p?.id === id) {
                 for (const key in p) {
@@ -98,17 +109,23 @@ export class ArtistService {
 
         if (res) {
             return JSON.stringify({message:"The artist was successful changed!"})
-            /* return res */ /* "The artist was successful changed!" */
+
         } else {
             throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND)
-        }
+        } */
 
-       /*  return this.products.find(p => p.id === id) */
+
     }
 
-     deleteArtist(id: string) {
+    async deleteArtist(id: string) {
 
-        if (!checkUUID.test(id)) {
+        const deleteResult = await this.artistRepository.delete(id)
+
+        if(deleteResult.affected === 0){
+            throw new HttpException("This artist doesn't track", HttpStatus.NOT_FOUND);
+        }
+        return
+       /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
@@ -135,11 +152,8 @@ export class ArtistService {
             artists.splice(res, 1);
 
             return { message: 'Artist has been deleted' };
-           /*  artists.splice(res, 1);
-            return JSON.stringify({message:'Artist has been deleted'})
-            return 'Artist has been deleted'; */
         } else {
             throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND);
-        }
+        } */
     }
 }

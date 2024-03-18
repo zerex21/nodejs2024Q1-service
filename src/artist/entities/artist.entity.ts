@@ -1,11 +1,8 @@
-import { IsUUID } from "class-validator";
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('artist')
 export class Artist{
-    @PrimaryGeneratedColumn()
-    @IsUUID(4)
+    @PrimaryGeneratedColumn("uuid")
     id: string
 
     @Column()

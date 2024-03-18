@@ -23,11 +23,11 @@ export class TrackService {
 
         const res = await this.trackRepository.findOneBy({id})
 
-        if(res){
-            return res
-        }
+        if(!res){
+            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
 
-        throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
+        }
+        return res
        /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }

@@ -11,7 +11,7 @@ export class ArtistController {
     @Get()
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    getAll(){
+    async getAll(){
         return this.artistService.getAllArtists()
     }
 
@@ -20,28 +20,28 @@ export class ArtistController {
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
     async getArtistById(@Param('id') userId:string){
-        return  this.artistService.getArtistById(userId)
+        return await this.artistService.getArtistById(userId)
     }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
     @Header('Content-Type', 'application/json')
-    createArtist(@Body() CreateArtistDto:CreateArtistDto){
-        return this.artistService.createArtist(CreateArtistDto)
+    async createArtist(@Body() CreateArtistDto:CreateArtistDto){
+        return await this.artistService.createArtist(CreateArtistDto)
     }
 
     @Put(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    updateArtistById(@Body() UpdateDataArtistDto: UpdateDataArtistDto, @Param('id') userId:string){
-        return this.artistService.updateArtistById(UpdateDataArtistDto,userId)
+    async updateArtistById(@Body() UpdateDataArtistDto: UpdateDataArtistDto, @Param('id') userId:string){
+        return await this.artistService.updateArtistById(UpdateDataArtistDto,userId)
     }
 
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @Header('Content-Type', 'application/json')
-    removeArtist(@Param('id') userId:string){
-        return (this.artistService.deleteArtist(userId))
+    async removeArtist(@Param('id') userId:string){
+        return await (this.artistService.deleteArtist(userId))
     }
 }

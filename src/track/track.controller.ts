@@ -11,8 +11,8 @@ export class TrackController {
     @Get()
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    getAll(){
-        return this.trackService.getAllTracks()
+   async getAll(){
+        return await this.trackService.getAllTracks()
     }
 
 
@@ -20,29 +20,29 @@ export class TrackController {
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
     async getTrackById(@Param('id') userId:string){
-        return  this.trackService.getTrackById(userId)
+        return await this.trackService.getTrackById(userId)
     }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
     @Header('Content-Type', 'application/json')
-    createTrack(@Body() CreateTrackDto:CreateTrackDto){
-        return this.trackService.createTrack(CreateTrackDto)
+    async createTrack(@Body() CreateTrackDto:CreateTrackDto){
+        return await this.trackService.createTrack(CreateTrackDto)
     }
 
     @Put(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    updateTrackById(@Body() UpdateDataTrackDto: UpdateDataTrackDto, @Param('id') userId:string){
-        return this.trackService.updateTrackById(UpdateDataTrackDto,userId)
+    async updateTrackById(@Body() UpdateDataTrackDto: UpdateDataTrackDto, @Param('id') userId:string){
+        return await this.trackService.updateTrackById(UpdateDataTrackDto,userId)
     }
 
 
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @Header('Content-Type', 'application/json')
-    removeTrack(@Param('id') userId:string){
-        return (this.trackService.deleteTrack(userId))
+    async removeTrack(@Param('id') userId:string){
+        return await (this.trackService.deleteTrack(userId))
     }
 }
 

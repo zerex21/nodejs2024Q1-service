@@ -1,33 +1,34 @@
 /* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { base as mainBase } from "../../base";
 import { UpdateDataTrackDto } from './dto/update-data-track.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Track } from './entities/track.entity';
+import { Repository } from 'typeorm';
 
-
-interface Track {
-    id: string; // uuid v4
-    name: string;
-    artistId: string | null; // refers to Artist
-    albumId: string | null; // refers to Album
-    duration: number; // integer number
-  }
-
-const tracks = mainBase.Tracks
-const favs = mainBase.Favorites.tracks
-const checkUUID = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
 
 @Injectable()
 export class TrackService {
+    constructor(
+        @InjectRepository(Track)
+        private readonly trackRepository: Repository<Track>,
+      ) {}
 
-    getAllTracks() {
-        return tracks
+
+    async getAllTracks() {
+        return await this.trackRepository.find()
     }
 
-    getTrackById(id: string) {
+    async getTrackById(id: string) {
 
-        if (!checkUUID.test(id)) {
+        const res = await this.trackRepository.findOneBy({id})
+
+        if(res){
+            return res
+        }
+
+        throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
+       /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
@@ -41,11 +42,18 @@ export class TrackService {
             return res
         } else {
             throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND)
-        }
+        } */
     }
 
-    createTrack(CreateTrackDto: CreateTrackDto) {
-        if((Object.keys(CreateTrackDto)).length >= 5 || (!CreateTrackDto.hasOwnProperty('name') ||
+   async createTrack(CreateTrackDto: CreateTrackDto) {
+        try {
+            const newTrack = await this.trackRepository.create(CreateTrackDto);
+            return await this.trackRepository.save(newTrack);
+          } catch (error) {
+            throw new HttpException("Artist or Album doesn't exist", HttpStatus.NOT_FOUND);
+          }
+
+      /*   if((Object.keys(CreateTrackDto)).length >= 5 || (!CreateTrackDto.hasOwnProperty('name') ||
             !CreateTrackDto.hasOwnProperty('artistId') || !CreateTrackDto.hasOwnProperty('albumId') ||
             !CreateTrackDto.hasOwnProperty('duration')) || (typeof CreateTrackDto.name !== 'string' ||
             typeof CreateTrackDto.artistId !== 'string' && CreateTrackDto.artistId !== null ||
@@ -61,11 +69,28 @@ export class TrackService {
         })
 
         tracks.push(track)
-        return track
+        return track */
     }
 
-    updateTrackById(UpdateDataTrackDto:UpdateDataTrackDto,id: string) {
-        const allowedKeys = ['name', 'artistId', 'albumId', 'duration'];
+   async updateTrackById(UpdateDataTrackDto:UpdateDataTrackDto,id: string) {
+        const entity = await this.trackRepository.findOneBy({ id });
+        if (!entity) {
+            throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
+        }
+        for (const key in UpdateDataTrackDto) {
+            if (Object.prototype.hasOwnProperty.call(UpdateDataTrackDto, key)) {
+                const element = UpdateDataTrackDto[key];
+                entity[key] = element;
+            }
+        }
+        try {
+            await this.trackRepository.update({ id }, UpdateDataTrackDto);
+        } catch (error) {
+            throw new HttpException("Artist or Album doesn't exist", HttpStatus.NOT_FOUND);
+    }
+        return entity;
+
+        /* const allowedKeys = ['name', 'artistId', 'albumId', 'duration'];
         const keys = Object.keys(UpdateDataTrackDto);
 
         if (!checkUUID.test(id)) {
@@ -101,12 +126,17 @@ export class TrackService {
             return "Your track was successful changed!"
         } else {
             throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND)
-        }
+        } */
     }
 
-     deleteTrack(id: string) {
+    async deleteTrack(id: string) {
+        const deleteResult = await this.trackRepository.delete(id)
 
-        if (!checkUUID.test(id)) {
+        if(deleteResult.affected === 0){
+            throw new HttpException("This user doesn't track", HttpStatus.NOT_FOUND);
+        }
+        return
+       /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
 
@@ -125,7 +155,7 @@ export class TrackService {
             return JSON.stringify({message:'Track has been deleted'})
         } else {
             throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND);
-        }
+        } */
     }
 
 }

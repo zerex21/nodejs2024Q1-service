@@ -16,8 +16,8 @@ export class UserController {
     @Header('Content-Type', 'application/json')
     async getAll(){
         const users = await this.userService.getAllUsers();
-    const usersOnePassword = users.map((user) => new UserEntity(user));
-    return usersOnePassword;
+        const usersOnePassword = users.map((user) => new UserEntity(user));
+        return usersOnePassword;
         /* const users = await this.userService.getAllUsers()
         return new UserEntity(users) */
        /*  const usersOhnePassword = (await users).map((user) => new UserEntity(user));

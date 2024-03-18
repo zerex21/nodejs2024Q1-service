@@ -1,4 +1,4 @@
-import { Exclude } from 'class-transformer';
+/* import { Exclude } from 'class-transformer';
 
 export class UserEntity {
   id: string;
@@ -13,4 +13,4 @@ export class UserEntity {
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
   }
-}
+} */

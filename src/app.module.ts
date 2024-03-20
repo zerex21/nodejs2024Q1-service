@@ -8,6 +8,11 @@ import { FavsModule } from './favs/favs.module';
 import { TrackModule } from './track/track.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { dataSourceOptions } from 'dataSetting/dataSetting';
+import { config } from 'dotenv';
+
+config()
+
 
 @Module({
   imports: [
@@ -16,21 +21,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ArtistModule,
     FavsModule,
     TrackModule,
-    /* ConfigModule.forRoot({isGlobal: true}), */
-    TypeOrmModule.forRoot/* Async */({
-      /* imports: [ConfigModule],
-      useFactory: (configService:ConfigService) => ({ */
-        type: 'postgres',
-        host: 'localhost',
-        port: 5343,
-        username: 'postgres',
-        password: '2109qQ',
-        database:'databaseorm',
-        synchronize: true,
-        entities: [__dirname + '/../**/*.entity{.js, .ts}']
-     /*  }),
-      inject: [ConfigService], */
-    })
+    TypeOrmModule.forRoot(dataSourceOptions)
   ],
   controllers: [AppController],
   providers: [AppService],

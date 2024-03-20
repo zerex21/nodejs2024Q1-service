@@ -118,13 +118,17 @@ export class ArtistService {
     }
 
     async deleteArtist(id: string) {
-
-        const deleteResult = await this.artistRepository.delete(id)
+        const { affected } = await this.artistRepository.delete(id);
+        if (!affected) {
+          throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
+        }
+        return;
+        /* const deleteResult = await this.artistRepository.delete(id)
 
         if(deleteResult.affected === 0){
             throw new HttpException("This artist doesn't track", HttpStatus.NOT_FOUND);
         }
-        return
+        return */
        /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }

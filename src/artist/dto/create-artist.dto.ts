@@ -2,8 +2,8 @@ import { IsBoolean, IsString, IsUUID } from "class-validator";
 
 
 export class CreateArtistDto{
-   @IsUUID(4)
-   readonly id: string; // uuid v4
+   /* @IsUUID(4)
+   readonly id: string; */
 
    @IsString()
    readonly name: string;

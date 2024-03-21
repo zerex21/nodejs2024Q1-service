@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header, ParseUUIDPipe } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateDataAlbumDto } from './dto/update-data-ulbum.dto';
@@ -21,7 +21,7 @@ export class AlbumController {
     @Get(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    async getAlbumById(@Param('id') userId:string){
+    async getAlbumById(@Param('id', new ParseUUIDPipe()) userId:string){
         return await this.albumService.getAlbumById(userId)
     }
 
@@ -35,7 +35,7 @@ export class AlbumController {
     @Put(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    async updateAlbumById(@Body() UpdateDataAlbumDto: UpdateDataAlbumDto, @Param('id') userId:string){
+    async updateAlbumById(@Body() UpdateDataAlbumDto: UpdateDataAlbumDto, @Param('id', new ParseUUIDPipe()) userId:string){
         return await this.albumService.updateAlbumById(UpdateDataAlbumDto,userId)
     }
 
@@ -43,7 +43,7 @@ export class AlbumController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @Header('Content-Type', 'application/json')
-    async removeAlbum(@Param('id') userId:string){
+    async removeAlbum(@Param('id', new ParseUUIDPipe()) userId:string){
         return await (this.albumService.deleteAlbum(userId))
     }
 }

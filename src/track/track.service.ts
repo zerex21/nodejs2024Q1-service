@@ -24,8 +24,8 @@ export class TrackService {
         const res = await this.trackRepository.findOneBy({id})
 
         if(!res){
-            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
-
+            /* throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND) */
+            throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
         }
         return res
        /*  if (!checkUUID.test(id)) {
@@ -50,7 +50,11 @@ export class TrackService {
             const newTrack = await this.trackRepository.create(CreateTrackDto);
             return await this.trackRepository.save(newTrack);
           } catch (error) {
-            throw new HttpException("Artist or Album doesn't exist", HttpStatus.NOT_FOUND);
+            /* throw new HttpException("Artist or Album doesn't exist", HttpStatus.NOT_FOUND); */
+            throw new HttpException(
+                `May be artist or album with passed id doesn't exist`,
+                404,
+              );
           }
 
       /*   if((Object.keys(CreateTrackDto)).length >= 5 || (!CreateTrackDto.hasOwnProperty('name') ||
@@ -72,21 +76,25 @@ export class TrackService {
         return track */
     }
 
-   async updateTrackById(UpdateDataTrackDto:UpdateDataTrackDto,id: string) {
+   async updateTrackById(CreateTrackDto: CreateTrackDto,id: string) {
         const entity = await this.trackRepository.findOneBy({ id });
         if (!entity) {
             throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
         }
-        for (const key in UpdateDataTrackDto) {
-            if (Object.prototype.hasOwnProperty.call(UpdateDataTrackDto, key)) {
-                const element = UpdateDataTrackDto[key];
+        for (const key in CreateTrackDto) {
+            if (Object.prototype.hasOwnProperty.call(CreateTrackDto, key)) {
+                const element = CreateTrackDto[key];
                 entity[key] = element;
             }
         }
         try {
-            await this.trackRepository.update({ id }, UpdateDataTrackDto);
+            await this.trackRepository.update({ id }, CreateTrackDto);
         } catch (error) {
-            throw new HttpException("Artist or Album doesn't exist", HttpStatus.NOT_FOUND);
+           /*  throw new HttpException("Artist or Album doesn't exist", HttpStatus.NOT_FOUND); */
+           throw new HttpException(
+            `May be artist or album with passed id doesn't exist`,
+            404,
+          );
     }
         return entity;
 
@@ -130,10 +138,11 @@ export class TrackService {
     }
 
     async deleteTrack(id: string) {
-        const deleteResult = await this.trackRepository.delete(id)
+        const { affected } = await this.trackRepository.delete(id)
 
-        if(deleteResult.affected === 0){
-            throw new HttpException("This user doesn't track", HttpStatus.NOT_FOUND);
+        if (!affected){
+            throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
+            /* throw new HttpException("This user doesn't track", HttpStatus.NOT_FOUND); */
         }
         return
        /*  if (!checkUUID.test(id)) {

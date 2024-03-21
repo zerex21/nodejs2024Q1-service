@@ -3,20 +3,20 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 
 @Entity('album')
 export class Album{
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column()
+    @Column({ name: 'name', type: 'varchar' })
     name: string
 
-    @Column()
+    @Column({ name: 'year', type: 'int' })
     year: number
 
-    @Column()
+    @Column({ name: 'artist_id', type: 'uuid', default: null })
     artistId: string | null;
 
     @ManyToOne(() => Artist, { onDelete: 'SET NULL' })
-    @JoinColumn()
+    @JoinColumn({ name: 'artist_id', referencedColumnName: 'id' })
     artist: Artist;
 
 }

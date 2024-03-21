@@ -1,31 +1,51 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Delete, Param, HttpCode, HttpStatus, Header } from '@nestjs/common';
-import { FavsService } from './favs.service';
+import { Controller, Get, Post, Delete, Param, HttpCode, HttpStatus, Header, ParseUUIDPipe, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { FavoritesService } from './favs.service';
 import { FavsEntity } from './entities/favsEntity';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('favs')
-export class FavsController {
-        constructor(private readonly favsService: FavsService){}
+export class FavoritesController {
+  constructor(private favoritesService: FavoritesService) {}
 
-        @Get()
-        @HttpCode(HttpStatus.OK)
-        @Header('Content-Type', 'application/json')
-        async getAll(){
-            return await this.favsService.getAllFavs()
-        }
+  @Get()
+  async getAll() {
+    return await this.favoritesService.getAll();
+  }
 
-        @Post(':type/:id')
-        @HttpCode(HttpStatus.CREATED)
-        @Header('Content-Type', 'application/json')
-        async addFavsById(@Param('type') type:string,@Param('id') userId:string){
-           const favs = await this.favsService.addFavsById(type,userId )
-           return new FavsEntity(favs);
-        }
+  @Post('track/:id')
+  async addTrack(@Param('id', new ParseUUIDPipe()) id: string) {
+    const favorite = await this.favoritesService.addTrack(id);
+    return new FavsEntity(favorite);
+  }
 
-        @Delete(':type/:id')
-        @HttpCode(HttpStatus.NO_CONTENT)
-        @Header('Content-Type', 'application/json')
-        async removeFavsById(@Param('type') type:string,@Param('id') userId:string){
-            return await (this.favsService.deleteFavsById(type,userId))
-        }
+  @HttpCode(204)
+  @Delete('track/:id')
+  async deleteTrack(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.favoritesService.deleteTrack(id);
+  }
+
+  @Post('album/:id')
+  async addAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
+    const favorite = await this.favoritesService.addAlbum(id);
+    return new FavsEntity(favorite);
+  }
+
+  @HttpCode(204)
+  @Delete('album/:id')
+  async deleteAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.favoritesService.deleteAlbum(id);
+  }
+
+  @Post('artist/:id')
+  async addArtist(@Param('id', new ParseUUIDPipe()) id: string) {
+    const favorite = await this.favoritesService.addArtist(id);
+    return new FavsEntity(favorite);
+  }
+
+  @HttpCode(204)
+  @Delete('artist/:id')
+  async deleteArtist(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.favoritesService.deleteArtist(id);
+  }
 }

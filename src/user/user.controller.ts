@@ -1,7 +1,6 @@
-/* eslint-disable prettier/prettier */
 import { UserService } from './user.service';
 
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header, ParseUUIDPipe } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user.dto';
 import { UserEntity } from './entities/userEntity';
@@ -28,7 +27,7 @@ export class UserController {
     @Get(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    async getUserById(@Param('id') userId:string): Promise<UserEntity>{
+    async getUserById(@Param('id', new ParseUUIDPipe()) userId:string): Promise<UserEntity>{
         const user = await this.userService.getUserById(userId)
         return new UserEntity(user)
     }
@@ -44,7 +43,7 @@ export class UserController {
     @Put(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    async updateUserById(@Body() UpdatePasswordDto: UpdatePasswordDto, @Param('id') userId:string): Promise<UserEntity> {
+    async updateUserById(@Body() UpdatePasswordDto: UpdatePasswordDto, @Param('id', new ParseUUIDPipe()) userId:string): Promise<UserEntity> {
         const user = await this.userService.updateUserById(UpdatePasswordDto,userId)
         return new UserEntity(user)
     }
@@ -53,7 +52,7 @@ export class UserController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @Header('Content-Type', 'application/json')
-    async removeUser(@Param('id') userId:string){
+    async removeUser(@Param('id', new ParseUUIDPipe()) userId:string){
        /*  const user = */await this.userService.deleteUser(userId)
         /* return new UserEntity(user) */
     }

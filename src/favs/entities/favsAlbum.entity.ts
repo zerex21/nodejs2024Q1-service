@@ -13,10 +13,10 @@ import {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ name: 'album_id', type: 'uuid' })
     albumId: string | null;
 
     @ManyToOne(() => Album, { onDelete: 'CASCADE' })
-    @JoinColumn()
+    @JoinColumn({ name: 'album_id', referencedColumnName: 'id' })
     album: Album;
   }

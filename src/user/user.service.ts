@@ -1,26 +1,10 @@
-/* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { base as mainBase } from "../../base";
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-
-
-
-interface IUser {
-    id: string,
-    login: string,
-    password: string,
-    version: number,
-    createdAt: string,
-    updatedAt: string
-}
-
-const users = mainBase.Users
-const checkUUID = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+import { createHash } from 'node:crypto';
 
 @Injectable()
 export class UserService {
@@ -30,18 +14,18 @@ export class UserService {
         private readonly userRepository: Repository<User>,
       ) {}
 
-    getAllUsers() {
-        return this.userRepository.find()
+    async getAllUsers() {
+        return await this.userRepository.find()
     }
 
-    getUserById(id: string) {
-        const res = this.userRepository.findOneBy({id})
+    async getUserById(id: string) {
+        const res = await this.userRepository.findOneBy({id})
 
         if(res){
             return res
         }
-
-        throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
+        throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
+       /*  throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND) */
 
        /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
@@ -60,13 +44,19 @@ export class UserService {
         } */
     }
 
-    createUser({login, password}:CreateUserDto/* CreateUserDto: CreateUserDto */) {
+    async createUser({login, password}:CreateUserDto/* CreateUserDto: CreateUserDto */): Promise<User> {
        /*  if((Object.keys(CreateUserDto)).length >= 3 || !CreateUserDto.login && !CreateUserDto.password ||
             typeof CreateUserDto.login !== "string" || typeof CreateUserDto.password !== "string" ){
             throw new HttpException('Incorrect dates, should be "login"(type string) and "password"(type string)', HttpStatus.BAD_REQUEST);
         }
- */
-        const newUser = this.userRepository.create( {login,password})
+ */     const hashPassword = this.hashPassword(password);
+        if (!hashPassword) {
+            throw new Error('Error bcrypt');
+        }
+        password = hashPassword;
+        const newUser = this.userRepository.create({ login, password });
+        return await this.userRepository.save(newUser);
+        /* const newUser = this.userRepository.create( {login,password}) */
       /*   const newUser = ({
             id: uuidv4(),
             login,
@@ -82,7 +72,7 @@ export class UserService {
         delete userShow.id
         return userShow */
 
-        return this.userRepository.save(newUser)
+        /* return this.userRepository.save(newUser) */
 
     }
 
@@ -92,14 +82,27 @@ export class UserService {
           throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
         }
 
-        const isEquals = /* this.hashPassword(oldPassword) ===  */user.password;
+        const isEquals = this.hashPassword(oldPassword) === user.password;
         if (!isEquals) {
           throw new HttpException(`oldPassword is wrong`, 403);
         }
 
-      /*   const hashNewPassword = this.hashPassword(newPassword); */
-        await this.userRepository.update(id, { password: newPassword });
+        const hashNewPassword = this.hashPassword(newPassword);
+        await this.userRepository.update(id, { password: hashNewPassword });
         return await this.userRepository.findOneBy({ id });
+        /* const user = await this.userRepository.findOneBy({ id });
+        if (!user) {
+          throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
+        }
+
+        const isEquals = user.password;
+        if (!isEquals) {
+          throw new HttpException(`oldPassword is wrong`, 403);
+        }
+        await this.userRepository.update(id, { password: newPassword });
+        return await this.userRepository.findOneBy({ id }); */
+      /*   const hashNewPassword = this.hashPassword(newPassword); */
+
        /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
         }
@@ -132,11 +135,14 @@ export class UserService {
     }
 
     async deleteUser(id: string) {
-        const deleteResult = await this.userRepository.delete(id)
+        const { affected } = await this.userRepository.delete(id)
 
-        if(deleteResult.affected === 0){
+        if (!affected) {
+            throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
+          }
+        /* if(deleteResult.affected === 0){
             throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND);
-        }
+        } */
         return
        /*  if (!checkUUID.test(id)) {
             throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
@@ -154,5 +160,7 @@ export class UserService {
         } */
     }
 
+    private hashPassword = (password: string): string =>
+    createHash('sha256').update(password).digest('hex');
 
 }

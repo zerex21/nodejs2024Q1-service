@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header, ParseUUIDPipe } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateDataArtistDto } from './dto/update-data-artist.dto';
@@ -19,7 +19,7 @@ export class ArtistController {
     @Get(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    async getArtistById(@Param('id') userId:string){
+    async getArtistById(@Param('id', new ParseUUIDPipe()) userId:string){
         return await this.artistService.getArtistById(userId)
     }
 
@@ -33,7 +33,7 @@ export class ArtistController {
     @Put(':id')
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-    async updateArtistById(@Body() UpdateDataArtistDto: UpdateDataArtistDto, @Param('id') userId:string){
+    async updateArtistById(@Body() UpdateDataArtistDto: UpdateDataArtistDto, @Param('id', new ParseUUIDPipe()) userId:string){
         return await this.artistService.updateArtistById(UpdateDataArtistDto,userId)
     }
 
@@ -41,7 +41,7 @@ export class ArtistController {
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
     @Header('Content-Type', 'application/json')
-    async removeArtist(@Param('id') userId:string){
+    async removeArtist(@Param('id', new ParseUUIDPipe()) userId:string){
         return await (this.artistService.deleteArtist(userId))
     }
 }

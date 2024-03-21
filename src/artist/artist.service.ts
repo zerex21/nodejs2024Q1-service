@@ -15,7 +15,7 @@ export class ArtistService {
       ) {}
 
     async getAllArtists() {
-        return this.artistRepository.find()
+        return await this.artistRepository.find()
     }
 
     async getArtistById(id: string) {
@@ -23,7 +23,8 @@ export class ArtistService {
         const res = await this.artistRepository.findOneBy({id})
 
         if(!res){
-            throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND)
+            throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
+            /* throw new HttpException("This artist doesn't exist", HttpStatus.NOT_FOUND) */
 
         }
         return res

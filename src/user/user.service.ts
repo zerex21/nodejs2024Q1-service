@@ -60,10 +60,6 @@ export class UserService {
         if (!affected) {
             throw new HttpException(`Record with id === ${id} doesn't exist`, HttpStatus.NOT_FOUND);
           }
-        /* if(deleteResult.affected === 0){
-            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND);
-        } */
-        /* return */
     }
 
     private hashPassword = (password: string): string =>

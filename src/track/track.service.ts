@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateDataTrackDto } from './dto/update-data-track.dto';
@@ -28,21 +27,6 @@ export class TrackService {
             throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
         }
         return res
-       /*  if (!checkUUID.test(id)) {
-            throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
-        }
-
-       const res = tracks.find(p => {
-            if (p?.id === id) {
-                return p
-            }
-        })
-
-        if (res) {
-            return res
-        } else {
-            throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND)
-        } */
     }
 
    async createTrack(CreateTrackDto: CreateTrackDto) {
@@ -56,24 +40,6 @@ export class TrackService {
                 404,
               );
           }
-
-      /*   if((Object.keys(CreateTrackDto)).length >= 5 || (!CreateTrackDto.hasOwnProperty('name') ||
-            !CreateTrackDto.hasOwnProperty('artistId') || !CreateTrackDto.hasOwnProperty('albumId') ||
-            !CreateTrackDto.hasOwnProperty('duration')) || (typeof CreateTrackDto.name !== 'string' ||
-            typeof CreateTrackDto.artistId !== 'string' && CreateTrackDto.artistId !== null ||
-            typeof CreateTrackDto.albumId !== 'string' && CreateTrackDto.albumId !== null ||
-            typeof CreateTrackDto.duration !== 'number')){
-            throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
-        }
-
-        const track = ({
-            id: uuidv4(),
-            ...CreateTrackDto,
-
-        })
-
-        tracks.push(track)
-        return track */
     }
 
    async updateTrackById(CreateTrackDto: CreateTrackDto,id: string) {
@@ -97,44 +63,6 @@ export class TrackService {
           );
     }
         return entity;
-
-        /* const allowedKeys = ['name', 'artistId', 'albumId', 'duration'];
-        const keys = Object.keys(UpdateDataTrackDto);
-
-        if (!checkUUID.test(id)) {
-            throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
-        }
-
-        for (const key of keys) {
-            if (!allowedKeys.includes(key) || (typeof UpdateDataTrackDto.name !== 'string' ||
-            typeof UpdateDataTrackDto.artistId !== 'string' && UpdateDataTrackDto.artistId !== null ||
-            typeof UpdateDataTrackDto.albumId !== 'string' && UpdateDataTrackDto.albumId !== null ||
-            typeof UpdateDataTrackDto.duration !== 'number')) {
-                throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        const res = tracks.find(p => {
-            if (p?.id === id) {
-                for (const key in p) {
-                    for (const key2 in UpdateDataTrackDto) {
-                        if (key === key2) {
-                            p[key] = UpdateDataTrackDto[key2]
-                        }
-                    }
-                }
-                return true
-            }else{
-                return false
-            }
-        })
-
-        if (res) {
-            return JSON.stringify({message:"Your track was successful changed!"})
-            return "Your track was successful changed!"
-        } else {
-            throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND)
-        } */
     }
 
     async deleteTrack(id: string) {
@@ -145,26 +73,6 @@ export class TrackService {
             /* throw new HttpException("This user doesn't track", HttpStatus.NOT_FOUND); */
         }
         return
-       /*  if (!checkUUID.test(id)) {
-            throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
-        }
-
-        const res = tracks.findIndex(p => p?.id === id);
-
-
-        if (res !== -1) {
-
-            for (let i = 0; i < favs.length; i++) {
-                if (favs[i]?.id === id) {
-                    favs[i].id = null
-                }
-            }
-
-            tracks.splice(res, 1);
-            return JSON.stringify({message:'Track has been deleted'})
-        } else {
-            throw new HttpException("This track doesn't exist", HttpStatus.NOT_FOUND);
-        } */
     }
 
 }

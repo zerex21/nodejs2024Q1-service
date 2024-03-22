@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 export class UpdateDataTrackDto{
    readonly name: string;
    readonly artistId: string | null; // refers to Artist

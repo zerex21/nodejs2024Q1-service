@@ -1,5 +1,4 @@
 import { UserService } from './user.service';
-
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header, ParseUUIDPipe } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user.dto';
@@ -17,10 +16,6 @@ export class UserController {
         const users = await this.userService.getAllUsers();
         const usersOnePassword = users.map((user) => new UserEntity(user));
         return usersOnePassword;
-        /* const users = await this.userService.getAllUsers()
-        return new UserEntity(users) */
-       /*  const usersOhnePassword = (await users).map((user) => new UserEntity(user));
-        return usersOhnePassword; */
     }
 
 
@@ -53,8 +48,8 @@ export class UserController {
     @HttpCode(HttpStatus.NO_CONTENT)
     @Header('Content-Type', 'application/json')
     async removeUser(@Param('id', new ParseUUIDPipe()) userId:string){
-       /*  const user = */await this.userService.deleteUser(userId)
-        /* return new UserEntity(user) */
+       await this.userService.deleteUser(userId)
+
     }
 
 }

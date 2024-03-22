@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header, ParseUUIDPipe } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -11,7 +10,7 @@ export class TrackController {
     @Get()
     @HttpCode(HttpStatus.OK)
     @Header('Content-Type', 'application/json')
-   async getAll(){
+    async getAll(){
         return await this.trackService.getAllTracks()
     }
 

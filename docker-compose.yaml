@@ -6,9 +6,9 @@ services:
     ports:
       - ${PORT}:${PORT}
     depends_on:
-      - postgres15
+      - postgres16
     environment:
-      PORT: ${POSTGRES_HOST}
+      PORT: ${PORT}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -18,8 +18,8 @@ services:
       - custom_network
     restart: always
 
-  postgres15:
-    container_name: postgres15
+  postgres16:
+    container_name: postgres16
     build: ./database/
     environment:
       POSTGRES_USER: ${POSTGRES_USER}

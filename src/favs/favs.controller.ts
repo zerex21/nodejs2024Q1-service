@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Delete, Param, HttpCode, HttpStatus, Header, ParseUUIDPipe, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { FavoritesService } from './favs.service';
 import { FavsEntity } from './entities/favsEntity';

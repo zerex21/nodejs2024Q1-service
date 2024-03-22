@@ -1,4 +1,3 @@
-import { IsUUID } from "class-validator";
 import { Album } from "src/album/entities/album.entity";
 import { Artist } from "src/artist/entities/artist.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
@@ -23,7 +22,7 @@ export class Track{
 
     @ManyToOne(() => Artist, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'artist_id', referencedColumnName: 'id' })
-    rtist: Artist;
+    artist: Artist;
 
     @ManyToOne(() => Album, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'album_id', referencedColumnName: 'id' })

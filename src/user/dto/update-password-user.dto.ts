@@ -1,9 +1,8 @@
 import { IsString } from 'class-validator';
-export class UpdatePasswordDto{
-   /* readonly oldPassword: string;
-   readonly newPassword: string; */
+export class UpdatePasswordDto {
+
    @IsString()
-   oldPassword: string; // previous password
+   oldPassword: string;
    @IsString()
-   newPassword: string; // new password
+   newPassword: string;
 }

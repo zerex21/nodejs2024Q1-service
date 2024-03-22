@@ -1,9 +1,7 @@
-import { IsBoolean, IsString, IsUUID } from "class-validator";
+import { IsBoolean, IsString } from "class-validator";
 
 
 export class CreateArtistDto{
-   /* @IsUUID(4)
-   readonly id: string; */
 
    @IsString()
    readonly name: string;

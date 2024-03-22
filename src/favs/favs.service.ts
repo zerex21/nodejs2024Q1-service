@@ -1,16 +1,9 @@
-/* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { base as mainBase } from "../../base";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FavsAlbum } from './entities/favsAlbum.entity';
 import { FavsArtist } from './entities/favsArtist.entity';
 import { FavsTrack } from './entities/favsTrack.entity';
-
-/* const favs = mainBase.Favorites
-const artists = mainBase.Artists
-const albums = mainBase.Albums
-const tracks = mainBase.Tracks */
 
 @Injectable()
 export class FavoritesService {

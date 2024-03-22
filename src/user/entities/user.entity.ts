@@ -1,54 +1,46 @@
-import { IsUUID } from "class-validator";
 import { Column, CreateDateColumn, Entity, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
 
 
 @Entity('user')
 export class User{
-    @PrimaryGeneratedColumn("uuid")
-    @IsUUID(4)
+    @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column()
-    login: string
+    @Column({ name: 'login', type: 'varchar' })
+    login: string;
 
-    @Column()
-    password: string
+    @Column({ name: 'password', type: 'varchar' })
+    password: string;
 
-    @VersionColumn()
-    version: number
+    @VersionColumn({ name: 'version', type: 'int' })
+    version: number;
 
-   /*  @CreateDateColumn({
+    @CreateDateColumn({
         name: 'created_at',
         type: 'timestamp',
         transformer: {
-          from(value: Date): number {
-            return value.getTime();
-          },
-          to(value: Date) {
-            return value;
-          },
+        from(value: Date): number {
+         return value.getTime();
         },
-      })
-      createdAt: number;
+        to(value: Date) {
+            return value;
+        },
+        },
+    })
+    createdAt: number;
 
-      @UpdateDateColumn({
+    @UpdateDateColumn({
         name: 'updated_at',
         type: 'timestamp',
         transformer: {
-          from(value: Date): number {
+        from(value: Date): number {
             return value.getTime();
-          },
-          to(value: Date) {
-            return value;
-          },
-        },
-      })
-      updatedAt: number; */
-
-    @CreateDateColumn()
-    createdAt: number
-
-    @CreateDateColumn()
-    updatedAt: number
+      },
+      to(value: Date) {
+        return value;
+      },
+    },
+  })
+  updatedAt: number;
 
 }

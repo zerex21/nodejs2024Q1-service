@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { FavoritesController } from './favs.controller';
 import { FavoritesService } from './favs.service';

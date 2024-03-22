@@ -30,6 +30,16 @@ export class TrackService {
     }
 
    async createTrack(CreateTrackDto: CreateTrackDto) {
+
+    if((Object.keys(CreateTrackDto)).length >= 5 || (!CreateTrackDto.hasOwnProperty('name') ||
+    !CreateTrackDto.hasOwnProperty('artistId') || !CreateTrackDto.hasOwnProperty('albumId') ||
+    !CreateTrackDto.hasOwnProperty('duration')) || (typeof CreateTrackDto.name !== 'string' ||
+    typeof CreateTrackDto.artistId !== 'string' && CreateTrackDto.artistId !== null ||
+    typeof CreateTrackDto.albumId !== 'string' && CreateTrackDto.albumId !== null ||
+    typeof CreateTrackDto.duration !== 'number')){
+    throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
+}
+
         try {
             const newTrack = await this.trackRepository.create(CreateTrackDto);
             return await this.trackRepository.save(newTrack);
@@ -43,6 +53,18 @@ export class TrackService {
     }
 
    async updateTrackById(CreateTrackDto: CreateTrackDto,id: string) {
+    const allowedKeys = ['name', 'artistId', 'albumId', 'duration'];
+    const keys = Object.keys(CreateTrackDto);
+
+    for (const key of keys) {
+        if (!allowedKeys.includes(key) || (typeof CreateTrackDto.name !== 'string' ||
+        typeof CreateTrackDto.artistId !== 'string' && CreateTrackDto.artistId !== null ||
+        typeof CreateTrackDto.albumId !== 'string' && CreateTrackDto.albumId !== null ||
+        typeof CreateTrackDto.duration !== 'number')) {
+            throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
+        }
+    }
+
         const entity = await this.trackRepository.findOneBy({ id });
         if (!entity) {
             throw new HttpException(`Record with id === ${id} doesn't exist`, 404);

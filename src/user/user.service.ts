@@ -29,7 +29,12 @@ export class UserService {
     }
 
     async createUser({login, password}:CreateUserDto): Promise<User> {
-    const hashPassword = this.hashPassword(password);
+
+        if(!login || !password){
+            throw new HttpException(`Record error`, HttpStatus.BAD_REQUEST);
+        }
+
+        const hashPassword = this.hashPassword(password);
         if (!hashPassword) {
             throw new Error('Error bcrypt');
         }
@@ -39,6 +44,11 @@ export class UserService {
     }
 
     async updateUserById({ oldPassword, newPassword }:UpdatePasswordDto,id: string) {
+
+        if(!oldPassword || !newPassword){
+            throw new HttpException(`Record error`, HttpStatus.BAD_REQUEST);
+        }
+
         const user = await this.userRepository.findOneBy({ id });
         if (!user) {
           throw new HttpException(`Record with id === ${id} doesn't exist`, HttpStatus.NOT_FOUND);

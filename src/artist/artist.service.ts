@@ -31,11 +31,27 @@ export class ArtistService {
 
     async createArtist(CreateArtistDto: CreateArtistDto) {
 
+        const {name, grammy} = {...CreateArtistDto}
+
+        if(!name || !grammy){
+            throw new HttpException(`Record error`, HttpStatus.BAD_REQUEST);
+        }
+
         const newArtist = this.artistRepository.create(CreateArtistDto);
         return await this.artistRepository.save(newArtist);
     }
 
     async updateArtistById(UpdateDataArtistDto:UpdateDataArtistDto,id: string) {
+
+        const allowedKeys = ['name', 'grammy'];
+        const keys = Object.keys(UpdateDataArtistDto);
+        for (const key of keys) {
+            if (!allowedKeys.includes(key) || (typeof UpdateDataArtistDto.name !== 'string' ||
+                typeof UpdateDataArtistDto.grammy !== 'boolean')) {
+                throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
+            }
+        }
+
         const entity = await this.artistRepository.findOneBy({ id });
     if (!entity) {
       throw new HttpException(`Record with id === ${id} doesn't exist`,  HttpStatus.NOT_FOUND);

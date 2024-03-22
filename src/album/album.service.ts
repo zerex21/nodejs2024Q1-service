@@ -34,7 +34,12 @@ export class AlbumService {
     }
 
     async createAlbum(CreateAlbumDto: CreateAlbumDto) {
-
+        if((Object.keys(CreateAlbumDto)).length >= 4 || (!CreateAlbumDto.hasOwnProperty('name') ||
+        !CreateAlbumDto.hasOwnProperty('year') || !CreateAlbumDto.hasOwnProperty('artistId')) ||
+        (typeof CreateAlbumDto.name !== 'string' || typeof CreateAlbumDto.year !== 'number' ||
+        typeof CreateAlbumDto.artistId !== 'string' && CreateAlbumDto.artistId !== null )){
+            throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
+        }
         try {
             const newAlbum = this.albumRepository.create(CreateAlbumDto);
             return await this.albumRepository.save(newAlbum);
@@ -45,7 +50,20 @@ export class AlbumService {
     }
 
     async updateAlbumById(UpdateDataAlbumDto:UpdateDataAlbumDto,id: string) {
-       const entity = await this.albumRepository.findOneBy({ id });
+
+        const allowedKeys = ['name', 'artistId', 'year'];
+        const keys = Object.keys(UpdateDataAlbumDto);
+
+        for (const key of keys) {
+            if (!allowedKeys.includes(key) || (typeof UpdateDataAlbumDto.name !== 'string' ||
+                typeof UpdateDataAlbumDto.year !== 'number' ||
+                typeof UpdateDataAlbumDto.artistId !== 'string' && UpdateDataAlbumDto.artistId !== null )) {
+                throw new HttpException('Incorrect dates types', HttpStatus.BAD_REQUEST);
+            }
+        }
+
+
+        const entity = await this.albumRepository.findOneBy({ id });
     if (!entity) {
         throw new HttpException(`Record with id === ${id} doesn't exist`, 404);
        /*  throw new HttpException("This artist with id doesn't exist", HttpStatus.NOT_FOUND); */

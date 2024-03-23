@@ -6,22 +6,9 @@ import { AlbumModule } from './album/album.module';
 import { ArtistModule } from './artist/artist.module';
 import { FavsModule } from './favs/favs.module';
 import { TrackModule } from './track/track.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { dataSourceOptions } from 'dataSetting/dataSetting';
-import { config } from 'dotenv';
-
-config();
 
 @Module({
-  imports: [
-    UserModule,
-    AlbumModule,
-    ArtistModule,
-    FavsModule,
-    TrackModule,
-    TypeOrmModule.forRoot(dataSourceOptions),
-  ],
+  imports: [UserModule, AlbumModule, ArtistModule, FavsModule, TrackModule],
   controllers: [AppController],
   providers: [AppService],
 })

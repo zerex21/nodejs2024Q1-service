@@ -1,14 +1,10 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
-import { FavoritesController } from './favs.controller';
-import { FavoritesService } from './favs.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { FavsAlbum } from './entities/favsAlbum.entity';
-import { FavsArtist } from './entities/favsArtist.entity';
-import { FavsTrack } from './entities/favsTrack.entity';
+import { FavsController } from './favs.controller';
+import { FavsService } from './favs.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FavsAlbum, FavsArtist, FavsTrack])],
-  controllers: [FavoritesController],
-  providers: [FavoritesService],
+    controllers:[FavsController],
+    providers:[FavsService]
 })
 export class FavsModule {}

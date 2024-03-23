@@ -1,8 +1,5 @@
-import { IsString } from 'class-validator';
-export class UpdatePasswordDto {
-  @IsString()
-  oldPassword: string;
-
-  @IsString()
-  newPassword: string;
+/* eslint-disable prettier/prettier */
+export class UpdatePasswordDto{
+   readonly oldPassword: string;
+   readonly newPassword: string;
 }

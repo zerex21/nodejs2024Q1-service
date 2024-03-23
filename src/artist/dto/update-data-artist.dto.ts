@@ -1,11 +1,5 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
-
-export class UpdateDataArtistDto {
-  @IsOptional()
-  @IsString()
-  readonly name: string;
-
-  @IsOptional()
-  @IsBoolean()
-  readonly grammy: boolean;
+/* eslint-disable prettier/prettier */
+export class UpdateDataArtistDto{
+   readonly name: string;
+   readonly grammy: boolean;
 }

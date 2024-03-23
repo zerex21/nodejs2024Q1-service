@@ -1,9 +1,6 @@
-import { IsBoolean, IsString } from 'class-validator';
-
-export class CreateArtistDto {
-  @IsString()
-  readonly name: string;
-
-  @IsBoolean()
-  readonly grammy: boolean;
+/* eslint-disable prettier/prettier */
+export class CreateArtistDto{
+   readonly id: string; // uuid v4
+   readonly name: string;
+   readonly grammy: boolean;
 }

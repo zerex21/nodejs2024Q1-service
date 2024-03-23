@@ -1,62 +1,48 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
-  HttpCode,
-  HttpStatus,
-  Header,
-  ParseUUIDPipe,
-  UseInterceptors,
-  ClassSerializerInterceptor,
-} from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, Header } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateDataTrackDto } from './dto/update-data-track.dto';
 
-@UseInterceptors(ClassSerializerInterceptor)
 @Controller('track')
 export class TrackController {
-  constructor(private readonly trackService: TrackService) {}
+    constructor(private readonly trackService: TrackService){}
 
-  @Get()
-  @HttpCode(HttpStatus.OK)
-  @Header('Content-Type', 'application/json')
-  async getAll() {
-    return await this.trackService.getAllTracks();
-  }
+    @Get()
+    @HttpCode(HttpStatus.OK)
+    @Header('Content-Type', 'application/json')
+    getAll(){
+        return this.trackService.getAllTracks()
+    }
 
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  @Header('Content-Type', 'application/json')
-  async getTrackById(@Param('id', new ParseUUIDPipe()) userId: string) {
-    return await this.trackService.getTrackById(userId);
-  }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @Header('Content-Type', 'application/json')
-  async createTrack(@Body() CreateTrackDto: CreateTrackDto) {
-    return await this.trackService.createTrack(CreateTrackDto);
-  }
+    @Get(':id')
+    @HttpCode(HttpStatus.OK)
+    @Header('Content-Type', 'application/json')
+    async getTrackById(@Param('id') userId:string){
+        return  this.trackService.getTrackById(userId)
+    }
 
-  @Put(':id')
-  @HttpCode(HttpStatus.OK)
-  @Header('Content-Type', 'application/json')
-  async updateTrackById(
-    @Body() CreateTrackDto: CreateTrackDto,
-    @Param('id', new ParseUUIDPipe()) userId: string,
-  ) {
-    return await this.trackService.updateTrackById(CreateTrackDto, userId);
-  }
+    @Post()
+    @HttpCode(HttpStatus.CREATED)
+    @Header('Content-Type', 'application/json')
+    createTrack(@Body() CreateTrackDto:CreateTrackDto){
+        return this.trackService.createTrack(CreateTrackDto)
+    }
 
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @Header('Content-Type', 'application/json')
-  async removeTrack(@Param('id', new ParseUUIDPipe()) userId: string) {
-    return await this.trackService.deleteTrack(userId);
-  }
+    @Put(':id')
+    @HttpCode(HttpStatus.OK)
+    @Header('Content-Type', 'application/json')
+    updateTrackById(@Body() UpdateDataTrackDto: UpdateDataTrackDto, @Param('id') userId:string){
+        return this.trackService.updateTrackById(UpdateDataTrackDto,userId)
+    }
+
+
+    @Delete(':id')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @Header('Content-Type', 'application/json')
+    removeTrack(@Param('id') userId:string){
+        return (this.trackService.deleteTrack(userId))
+    }
 }
+

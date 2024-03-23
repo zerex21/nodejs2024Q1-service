@@ -10,7 +10,7 @@
 ```
 git clone https://github.com/zerex/nodejs2024Q1-service.git
 cd nodejs2022Q4-service
-git checkout database-orm
+git checkout feat/part2
 ```
 
 ## Installing NPM modules

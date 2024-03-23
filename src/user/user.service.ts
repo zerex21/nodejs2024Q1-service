@@ -8,71 +8,79 @@ import { createHash } from 'node:crypto';
 
 @Injectable()
 export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-    constructor(
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
-      ) {}
+  async getAllUsers() {
+    return await this.userRepository.find();
+  }
 
-    async getAllUsers() {
-        return await this.userRepository.find()
+  async getUserById(id: string) {
+    const res = await this.userRepository.findOneBy({ id });
+
+    if (res) {
+      return res;
+    }
+    throw new HttpException(
+      `Record with id === ${id} doesn't exist`,
+      HttpStatus.NOT_FOUND,
+    );
+    /*  throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND) */
+  }
+
+  async createUser({ login, password }: CreateUserDto): Promise<User> {
+    if (!login || !password) {
+      throw new HttpException(`Record error`, HttpStatus.BAD_REQUEST);
     }
 
-    async getUserById(id: string) {
-        const res = await this.userRepository.findOneBy({id})
+    const hashPassword = this.hashPassword(password);
+    if (!hashPassword) {
+      throw new Error('Error bcrypt');
+    }
+    password = hashPassword;
+    const newUser = this.userRepository.create({ login, password });
+    return await this.userRepository.save(newUser);
+  }
 
-        if(res){
-            return res
-        }
-        throw new HttpException(`Record with id === ${id} doesn't exist`, HttpStatus.NOT_FOUND);
-       /*  throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND) */
+  async updateUserById(
+    { oldPassword, newPassword }: UpdatePasswordDto,
+    id: string,
+  ) {
+    if (!oldPassword || !newPassword) {
+      throw new HttpException(`Record error`, HttpStatus.BAD_REQUEST);
     }
 
-    async createUser({login, password}:CreateUserDto): Promise<User> {
-
-        if(!login || !password){
-            throw new HttpException(`Record error`, HttpStatus.BAD_REQUEST);
-        }
-
-        const hashPassword = this.hashPassword(password);
-        if (!hashPassword) {
-            throw new Error('Error bcrypt');
-        }
-        password = hashPassword;
-        const newUser = this.userRepository.create({ login, password });
-        return await this.userRepository.save(newUser);
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new HttpException(
+        `Record with id === ${id} doesn't exist`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
-    async updateUserById({ oldPassword, newPassword }:UpdatePasswordDto,id: string) {
-
-        if(!oldPassword || !newPassword){
-            throw new HttpException(`Record error`, HttpStatus.BAD_REQUEST);
-        }
-
-        const user = await this.userRepository.findOneBy({ id });
-        if (!user) {
-          throw new HttpException(`Record with id === ${id} doesn't exist`, HttpStatus.NOT_FOUND);
-        }
-
-        const isEquals = this.hashPassword(oldPassword) === user.password;
-        if (!isEquals) {
-          throw new HttpException(`oldPassword is wrong`, HttpStatus.FORBIDDEN);
-        }
-
-        const hashNewPassword = this.hashPassword(newPassword);
-        await this.userRepository.update(id, { password: hashNewPassword });
-        return await this.userRepository.findOneBy({ id });
+    const isEquals = this.hashPassword(oldPassword) === user.password;
+    if (!isEquals) {
+      throw new HttpException(`oldPassword is wrong`, HttpStatus.FORBIDDEN);
     }
 
-    async deleteUser(id: string) {
-        const { affected } = await this.userRepository.delete(id)
+    const hashNewPassword = this.hashPassword(newPassword);
+    await this.userRepository.update(id, { password: hashNewPassword });
+    return await this.userRepository.findOneBy({ id });
+  }
 
-        if (!affected) {
-            throw new HttpException(`Record with id === ${id} doesn't exist`, HttpStatus.NOT_FOUND);
-          }
+  async deleteUser(id: string) {
+    const { affected } = await this.userRepository.delete(id);
+
+    if (!affected) {
+      throw new HttpException(
+        `Record with id === ${id} doesn't exist`,
+        HttpStatus.NOT_FOUND,
+      );
     }
+  }
 
-    private hashPassword = (password: string): string =>
+  private hashPassword = (password: string): string =>
     createHash('sha256').update(password).digest('hex');
-
 }

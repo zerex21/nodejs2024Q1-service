@@ -11,8 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from 'dataSetting/dataSetting';
 import { config } from 'dotenv';
 
-config()
-
+config();
 
 @Module({
   imports: [
@@ -21,7 +20,7 @@ config()
     ArtistModule,
     FavsModule,
     TrackModule,
-    TypeOrmModule.forRoot(dataSourceOptions)
+    TypeOrmModule.forRoot(dataSourceOptions),
   ],
   controllers: [AppController],
   providers: [AppService],

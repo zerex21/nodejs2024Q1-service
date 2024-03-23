@@ -7,8 +7,8 @@ import { FavsArtist } from './entities/favsArtist.entity';
 import { FavsTrack } from './entities/favsTrack.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([FavsAlbum, FavsArtist, FavsTrack]),],
-    controllers:[FavoritesController],
-    providers:[FavoritesService]
+  imports: [TypeOrmModule.forFeature([FavsAlbum, FavsArtist, FavsTrack])],
+  controllers: [FavoritesController],
+  providers: [FavoritesService],
 })
 export class FavsModule {}

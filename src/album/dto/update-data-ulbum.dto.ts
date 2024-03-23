@@ -1,6 +1,6 @@
 import { IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class UpdateDataAlbumDto{
+export class UpdateDataAlbumDto {
   @IsOptional()
   @IsString()
   readonly name: string;

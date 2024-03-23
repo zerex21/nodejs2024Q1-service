@@ -9,7 +9,7 @@
 
 ```
 git clone https://github.com/zerex21/nodejs2024Q1-service.git
-cd nodejs2022Q4-service
+cd nodejs2024Q1-service
 git checkout feat/part2
 ```
 

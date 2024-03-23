@@ -5,10 +5,12 @@
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
 
-## Downloading
+## Downloading, change directory and change branch
 
 ```
-git clone {repository URL}
+git clone https://github.com/zerex/nodejs2024Q1-service.git
+cd nodejs2022Q4-service
+git checkout database-orm
 ```
 
 ## Installing NPM modules
@@ -17,45 +19,25 @@ git clone {repository URL}
 npm install
 ```
 
-## Running application
+## Add .env file
+
+- Copy file .env.example and rename the copied file to .env and change if nessesary a variables values
+
+## Running docker container
+
+you must have the docker desktop running
 
 ```
-npm start
+docker-compose up
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
-
-## Testing
-
-After application running open new terminal and enter:
-
-To run all tests without authorization
+## To run all tests, open a second terminal and perform follow command
 
 ```
 npm run test
 ```
 
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
-```
-
-### Auto-fix and format
+## Auto-fix and format
 
 ```
 npm run lint
@@ -65,8 +47,10 @@ npm run lint
 npm run format
 ```
 
-### Debugging in VSCode
+## For scan images for security vulnerabilities
 
-Press <kbd>F5</kbd> to debug.
+```
+npm run scan
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+```
+

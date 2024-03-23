@@ -8,7 +8,7 @@
 ## Downloading, change directory and change branch
 
 ```
-git clone https://github.com/zerex/nodejs2024Q1-service.git
+git clone https://github.com/zerex21/nodejs2024Q1-service.git
 cd nodejs2022Q4-service
 git checkout feat/part2
 ```

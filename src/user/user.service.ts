@@ -1,140 +1,86 @@
-/* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { base as mainBase } from "../../base";
-
-
-
-interface IUser {
-    id: string,
-    login: string,
-    password: string,
-    version: number,
-    createdAt: string,
-    updatedAt: string
-}
-
-const users = mainBase.Users
-const checkUUID = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { createHash } from 'node:crypto';
 
 @Injectable()
 export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
+  async getAllUsers() {
+    return await this.userRepository.find();
+  }
 
-    getCurrentDate(){
-        const currentDate = new Date();
-        const day = currentDate.getDate();
-        const month = currentDate.getMonth() + 1; // Месяцы начинаются с 0, поэтому добавляем 1
-        const year = currentDate.getFullYear();
-        const hours = currentDate.getHours();
-        const minutes = currentDate.getMinutes();
+  async getUserById(id: string) {
+    const res = await this.userRepository.findOneBy({ id });
 
-        // Форматирование чисел меньше 10 для добавления ведущего нуля
-        const formattedDay = day < 10 ? `0${day}` : `${day}`;
-        const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-        const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
-        const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    if (res) {
+      return res;
+    }
+    throw new HttpException(
+      `Record with id === ${id} doesn't exist`,
+      HttpStatus.NOT_FOUND,
+    );
+    /*  throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND) */
+  }
 
-        // Сборка строки с датой в нужном формате
-        const formattedDate = `${formattedDay}.${formattedMonth}.${year} ${formattedHours}:${formattedMinutes}`;
-
-        return `${formattedDate}`;
-      }
-
-    getAllUsers() {
-        return users
+  async createUser({ login, password }: CreateUserDto): Promise<User> {
+    if (!login || !password) {
+      throw new HttpException(`Record error`, HttpStatus.BAD_REQUEST);
     }
 
-    getUserById(id: string) {
-        if (!checkUUID.test(id)) {
-            throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
-        }
+    const hashPassword = this.hashPassword(password);
+    if (!hashPassword) {
+      throw new Error('Error bcrypt');
+    }
+    password = hashPassword;
+    const newUser = this.userRepository.create({ login, password });
+    return await this.userRepository.save(newUser);
+  }
 
-       const res = users.find(p => {
-            if (p?.id === id) {
-                return p
-            }
-        })
-
-        if (res) {
-            return res
-        } else {
-            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
-        }
+  async updateUserById(
+    { oldPassword, newPassword }: UpdatePasswordDto,
+    id: string,
+  ) {
+    if (!oldPassword || !newPassword) {
+      throw new HttpException(`Record error`, HttpStatus.BAD_REQUEST);
     }
 
-    createUser(CreateUserDto: CreateUserDto) {
-        if((Object.keys(CreateUserDto)).length >= 3 || !CreateUserDto.login && !CreateUserDto.password ||
-            typeof CreateUserDto.login !== "string" || typeof CreateUserDto.password !== "string" ){
-            throw new HttpException('Incorrect dates, should be "login"(type string) and "password"(type string)', HttpStatus.BAD_REQUEST);
-        }
-
-        const user = ({
-            id: uuidv4(),
-            ...CreateUserDto,
-            version: 1,
-            createdAt: Date.now(),
-            updatedAt: 0
-
-        })
-
-        users.push(user)
-        const userShow = {...user}
-        delete userShow.id
-        return userShow
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new HttpException(
+        `Record with id === ${id} doesn't exist`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
-    updateUserById(UpdatePasswordDto:UpdatePasswordDto,id: string) {
-
-        if (!checkUUID.test(id)) {
-            throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
-        }
-
-        if((Object.keys(UpdatePasswordDto)).length >= 3 || !UpdatePasswordDto.newPassword && !UpdatePasswordDto.oldPassword ||
-            typeof UpdatePasswordDto.newPassword !== "string" || typeof UpdatePasswordDto.oldPassword !== "string" ||
-            UpdatePasswordDto.oldPassword === UpdatePasswordDto.newPassword ){
-            throw new HttpException('Incorrect dates,passwords should be different and type string', HttpStatus.BAD_REQUEST);
-        }
-
-        const res = users.find(p => {
-            if (p?.id === id) {
-                if(p.password !== UpdatePasswordDto.newPassword && p.password === UpdatePasswordDto.oldPassword){
-                    p.password = UpdatePasswordDto.newPassword
-                    p.version++
-                    p.updatedAt= Date.now()
-                    return true
-                }else{
-                    throw new HttpException('Check correct your passwords', HttpStatus.BAD_REQUEST);
-                }
-            }
-        })
-
-        if (res) {
-            return JSON.stringify({message:"Your password was successful changed!"})
-            return "Your password was successful changed!"
-        } else {
-            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND)
-        }
+    const isEquals = this.hashPassword(oldPassword) === user.password;
+    if (!isEquals) {
+      throw new HttpException(`oldPassword is wrong`, HttpStatus.FORBIDDEN);
     }
 
-     deleteUser(id: string) {
-        if (!checkUUID.test(id)) {
-            throw new HttpException('Incorrect id', HttpStatus.BAD_REQUEST);
-        }
+    const hashNewPassword = this.hashPassword(newPassword);
+    await this.userRepository.update(id, { password: hashNewPassword });
+    return await this.userRepository.findOneBy({ id });
+  }
 
-        const res = users.findIndex(p => p?.id === id);
+  async deleteUser(id: string) {
+    const { affected } = await this.userRepository.delete(id);
 
-
-        if (res !== -1) {
-            users[res] = null
-            /* users.splice(res, 1); */
-            return JSON.stringify({message:'User has been deleted'})
-        } else {
-            throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND);
-        }
+    if (!affected) {
+      throw new HttpException(
+        `Record with id === ${id} doesn't exist`,
+        HttpStatus.NOT_FOUND,
+      );
     }
+  }
 
-
+  private hashPassword = (password: string): string =>
+    createHash('sha256').update(password).digest('hex');
 }

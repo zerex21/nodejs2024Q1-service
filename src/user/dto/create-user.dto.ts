@@ -1,5 +1,8 @@
-/* eslint-disable prettier/prettier */
-export class CreateUserDto{
-   readonly login: string;
-   readonly password: string;
+import { IsString } from 'class-validator';
+export class CreateUserDto {
+  @IsString()
+  login: string;
+
+  @IsString()
+  password: string;
 }

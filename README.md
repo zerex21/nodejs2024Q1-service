@@ -51,5 +51,4 @@ npm run format
 
 ```
 npm run scan
-
 ```

@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from 'dataSetting/dataSetting';
 import { config } from 'dotenv';
+import { AuthModule } from './auth/auth.module';
 
 config();
 
@@ -21,6 +22,7 @@ config();
     FavsModule,
     TrackModule,
     TypeOrmModule.forRoot(dataSourceOptions),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

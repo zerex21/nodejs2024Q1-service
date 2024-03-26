@@ -12,9 +12,9 @@ async function bootstrap() {
     .setTitle('RsSchool nodejs2024Q1-service')
     .setDescription('Documentation NodeJs-Service')
     .setVersion('1.0.0')
-    .build()
+    .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('doc', app, document)
+  SwaggerModule.setup('doc', app, document);
 
   await app.listen(PORT);
   console.log(`Application is running on port ${PORT}`);

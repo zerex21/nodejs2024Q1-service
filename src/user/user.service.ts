@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -39,9 +44,12 @@ export class UserService {
     if (!hashPassword) {
       throw new Error('Error bcrypt');
     }
-    password = hashPassword;
-    const newUser = this.userRepository.create({ login, password });
-    return await this.userRepository.save(newUser);
+    const newUser = this.userRepository.create({
+      login,
+      password: hashPassword,
+    });
+    const savedUser = await this.userRepository.save(newUser);
+    return savedUser;
   }
 
   async updateUserById(
@@ -62,7 +70,10 @@ export class UserService {
 
     const isEquals = this.hashPassword(oldPassword) === user.password;
     if (!isEquals) {
-      throw new HttpException(`oldPassword is wrong`, HttpStatus.FORBIDDEN);
+      throw new HttpException(
+        `The old password is wrong`,
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     const hashNewPassword = this.hashPassword(newPassword);
@@ -79,6 +90,22 @@ export class UserService {
         HttpStatus.NOT_FOUND,
       );
     }
+  }
+
+  async checkPassword({ login, password }: CreateUserDto) {
+    const user = await this.userRepository.findOneBy({ login });
+
+    if (!user) {
+      throw new ForbiddenException(`Not allowed access`);
+    }
+
+    const hashedPassword = this.hashPassword(password);
+
+    if (hashedPassword !== user.password) {
+      throw new ForbiddenException(`Not allowed access`);
+    }
+
+    return user;
   }
 
   private hashPassword = (password: string): string =>

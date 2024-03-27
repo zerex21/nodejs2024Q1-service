@@ -43,7 +43,7 @@ export class AuthController {
     @Body('refreshToken', new ValidationRefreshPipe())
     refreshToken: string,
   ): Promise<IToken> {
-    const token = this.authService.refresh(refreshToken);
-    return token;
+    const tokens = this.authService.refresh(refreshToken);
+    return tokens;
   }
 }

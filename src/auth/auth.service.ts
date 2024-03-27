@@ -22,9 +22,9 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
   /* throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND) */
-  async login(userDto: CreateUserDto): Promise<IToken> {
+  async login(userDto: CreateUserDto) {
     const { id, login } = await this.userService.checkPassword(userDto);
-    const tokens = await this.generateToken(id, login);
+    const tokens = await this.generateTokens(id, login);
     return tokens;
   }
 
@@ -36,7 +36,7 @@ export class AuthService {
       if (error.code === '23505') {
         throw new ConflictException('Conflict. Login already exists');
       }
-      throw new UnauthorizedException('Internal Server Error');
+      throw new InternalServerErrorException('Internal Server Error');
     }
     /* return this.generateToken(user) */
     return user;
@@ -49,7 +49,7 @@ export class AuthService {
         ignoreExpiration: false,
       });
 
-      const tokens = await this.generateToken(sub, login);
+      const tokens = await this.generateTokens(sub, login);
       return tokens;
     } catch (error) {
       if (error instanceof JsonWebTokenError) {
@@ -59,7 +59,7 @@ export class AuthService {
     }
   }
 
-  async generateToken(userId: string, login: string): Promise<IToken> {
+  async generateTokens(userId: string, login: string): Promise<IToken> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {

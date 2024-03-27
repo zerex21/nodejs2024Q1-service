@@ -1,5 +1,14 @@
 import { AuthService } from './auth.service';
-import { Body, ClassSerializerInterceptor, Controller, HttpCode, HttpStatus, Post, SetMetadata, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  SetMetadata,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UserEntity } from 'src/user/entities/userEntity';

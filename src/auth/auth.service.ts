@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
@@ -16,7 +17,10 @@ import { JsonWebTokenError } from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService);
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
   /* throw new HttpException("This user doesn't exist", HttpStatus.NOT_FOUND) */
   async login(userDto: CreateUserDto): Promise<IToken> {
     const { id, login } = await this.userService.checkPassword(userDto);
@@ -24,7 +28,7 @@ export class AuthService {
     return tokens;
   }
 
-  async signUp(userDto: CreateUserDto): Promise<UserEntity> {
+  async signUp(userDto: CreateUserDto): Promise<User> {
     let user: User;
     try {
       user = await this.userService.createUser(userDto);
@@ -32,7 +36,7 @@ export class AuthService {
       if (error.code === '23505') {
         throw new ConflictException('Conflict. Login already exists');
       }
-      throw new InternalServerErrorException('Internal Server Error');
+      throw new UnauthorizedException('Internal Server Error');
     }
     /* return this.generateToken(user) */
     return user;

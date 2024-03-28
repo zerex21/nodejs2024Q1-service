@@ -12,7 +12,7 @@ import { dataSourceOptions } from 'dataSetting/dataSetting';
 import { config } from 'dotenv';
 import { AuthModule } from './auth/auth.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
+import { JwtAccessAuthGuard } from './auth/guard/jwt-auth.guard';
 import { LoggerModule } from './app-logger/logger.module';
 import { AllExceptionsFilter } from './app-logger/all_exeption.filter';
 import { MyLogger } from './app-logger/logger.service';
@@ -37,10 +37,6 @@ config();
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
     },
   ],
 })

@@ -18,6 +18,12 @@ import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateDataArtistDto } from './dto/update-data-artist.dto';
 import { JwtAccessAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { Artist } from './entities/artist.entity';
 
 @UseGuards(JwtAccessAuthGuard)
 /* @UseInterceptors(ClassSerializerInterceptor) */
@@ -26,6 +32,11 @@ export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all artists' })
+  @ApiResponse({ status: 200, type: [Artist] })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   async getAll() {
@@ -33,6 +44,11 @@ export class ArtistController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get the artist by id' })
+  @ApiResponse({ status: 200, type: Artist })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   async getArtistById(@Param('id', new ParseUUIDPipe()) userId: string) {
@@ -40,6 +56,11 @@ export class ArtistController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create the artist' })
+  @ApiResponse({ status: 201, type: Artist })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.CREATED)
   @Header('Content-Type', 'application/json')
   async createArtist(@Body() CreateArtistDto: CreateArtistDto) {
@@ -47,6 +68,11 @@ export class ArtistController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update the artist by id' })
+  @ApiResponse({ status: 200, type: Artist })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   async updateArtistById(
@@ -60,6 +86,10 @@ export class ArtistController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete the artist by id' })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Header('Content-Type', 'application/json')
   async removeArtist(@Param('id', new ParseUUIDPipe()) userId: string) {

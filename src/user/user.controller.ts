@@ -19,6 +19,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password-user.dto';
 import { UserEntity } from './entities/userEntity';
 import { JwtAccessAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @UseGuards(JwtAccessAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
@@ -27,6 +32,11 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ status: 200, type: [UserEntity] })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   async getAll() {
@@ -36,6 +46,11 @@ export class UserController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get the user by id' })
+  @ApiResponse({ status: 200, type: UserEntity })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   async getUserById(
@@ -46,6 +61,11 @@ export class UserController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create the user' })
+  @ApiResponse({ status: 201, type: UserEntity })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.CREATED)
   @Header('Content-Type', 'application/json')
   async createUser(@Body() CreateUserDto: CreateUserDto): Promise<UserEntity> {
@@ -54,6 +74,11 @@ export class UserController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update the user by id' })
+  @ApiResponse({ status: 201, type: UserEntity })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   async updateUserById(
@@ -68,6 +93,10 @@ export class UserController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete the user by id' })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Header('Content-Type', 'application/json')
   async removeUser(@Param('id', new ParseUUIDPipe()) userId: string) {

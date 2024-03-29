@@ -12,17 +12,31 @@ import {
   ParseUUIDPipe,
   UseInterceptors,
   ClassSerializerInterceptor,
+  UseGuards,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateDataAlbumDto } from './dto/update-data-ulbum.dto';
+import { JwtAccessAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { Album } from './entities/album.entity';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
-@UseInterceptors(ClassSerializerInterceptor)
+@UseGuards(JwtAccessAuthGuard)
+/* @UseInterceptors(ClassSerializerInterceptor) */
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all albums' })
+  @ApiResponse({ status: 200, type: [Album] })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   async getAll() {
@@ -30,6 +44,11 @@ export class AlbumController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get the album by id' })
+  @ApiResponse({ status: 200, type: Album })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   async getAlbumById(@Param('id', new ParseUUIDPipe()) userId: string) {
@@ -37,6 +56,11 @@ export class AlbumController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create the album' })
+  @ApiResponse({ status: 201, type: Album })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.CREATED)
   @Header('Content-Type', 'application/json')
   async createAlbum(@Body() CreateAlbumDto: CreateAlbumDto) {
@@ -44,6 +68,11 @@ export class AlbumController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update the album by id' })
+  @ApiResponse({ status: 200, type: Album })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   async updateAlbumById(
@@ -54,6 +83,10 @@ export class AlbumController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete the album by id' })
+  @ApiUnauthorizedResponse({
+    description: 'Access token is missing or invalid',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Header('Content-Type', 'application/json')
   async removeAlbum(@Param('id', new ParseUUIDPipe()) userId: string) {

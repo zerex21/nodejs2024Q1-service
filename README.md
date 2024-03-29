@@ -10,7 +10,7 @@
 ```
 git clone https://github.com/zerex21/nodejs2024Q1-service.git
 cd nodejs2024Q1-service
-git checkout feat/part2
+git checkout feat/part3
 ```
 
 ## Installing NPM modules
@@ -21,7 +21,7 @@ npm install
 
 ## Add .env file
 
-- Copy file .env.example and rename the copied file to .env and change if nessesary a variables values
+- Copy file .env.example and rename the copied file to .env and change if necessary a variables values
 
 ## Running docker container
 
@@ -34,8 +34,12 @@ docker-compose up
 ## To run all tests, open a second terminal and perform follow command
 
 ```
-npm run test
+npm run test:auth
 ```
+
+## Using swagger api
+
+An API Swagger is available at localhost:4000/doc by default
 
 ## Auto-fix and format
 
@@ -51,5 +55,4 @@ npm run format
 
 ```
 npm run scan
-
 ```
